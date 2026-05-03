@@ -1,0 +1,18 @@
+{
+  "section_id": "7dd53901-7d55-4361-9d21-972e780469ed",
+  "fr_id": "FR2",
+  "name": "Borrow/Return",
+  "priority": "Critical",
+  "short_description": "Track lending and return of library books.",
+  "description": "The system must allow staff to register loans when books are checked out and to mark them as returned. The application will update book status in real time and track current borrower, due date, and overdue status. This workflow helps maintain accountability for library materials.",
+  "user_stories": [
+    "As a librarian, I want to check books out to borrowers so that lending is properly tracked.",
+    "As a librarian, I want to mark books as returned to keep the catalog accurate.",
+    "As an assistant, I want overdue items flagged for follow-up."
+  ],
+  "acceptance_criteria": [
+    "Given a listed book, When a loan is recorded, Then the borrower's record and book status are updated.",
+    "Given a due book is returned, When the return is processed, Then the book becomes available for others."
+  ],
+  "interface_notes": "Loan/return screens for staff; automatic status updates (HTMX forms)."
+}

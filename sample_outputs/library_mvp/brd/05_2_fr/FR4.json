@@ -1,0 +1,17 @@
+{
+  "section_id": "77e5bc6a-79f1-4a4d-aa7c-bdd98ca014d3",
+  "fr_id": "FR4",
+  "name": "Overdue Report",
+  "priority": "Medium",
+  "short_description": "Generate overdue book report for staff follow-up.",
+  "description": "Staff must be able to run a report of all books that are past due and presently checked out. This feature assists with follow-up, accountability, and communications with borrowers. The report will list overdue items, borrowers, and contact information if available.",
+  "user_stories": [
+    "As a librarian, I want to see a list of all overdue books so I can follow up with patrons.",
+    "As an assistant, I want concise overdue reports to manage reminders easily."
+  ],
+  "acceptance_criteria": [
+    "Given overdue loans, When the report is run, Then all overdue items and borrower details are listed accurately.",
+    "Given no overdue books, When the report is run, Then a clear 'no overdue items' message is shown."
+  ],
+  "interface_notes": "Staff-only report screen; downloadable as CSV."
+}

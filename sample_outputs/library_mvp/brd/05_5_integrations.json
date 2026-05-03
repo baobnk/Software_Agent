@@ -1,0 +1,10 @@
+{
+  "integrations": [
+    {
+      "system": "None",
+      "direction": "Outbound",
+      "protocol": "N/A",
+      "note": "MVP does not integrate with external systems."
+    }
+  ]
+}

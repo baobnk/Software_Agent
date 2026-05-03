@@ -1,0 +1,17 @@
+{
+  "row_num": null,
+  "ref_code": null,
+  "parent_code": "III.A",
+  "hierarchy_level": 4,
+  "code": "III.A-02",
+  "feature": "UI Testing for Book and User Management",
+  "description": "Test frontend UI components for book management and user login.",
+  "remark": "",
+  "md_be": 0.0,
+  "md_fe": 2.0,
+  "md_ba": 0,
+  "md_qc": 0,
+  "md_pm": 0,
+  "source_feature_id": "FR1",
+  "source_section_id": null
+}

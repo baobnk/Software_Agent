@@ -1,0 +1,33 @@
+# Output folder configuration
+#
+# All paths can be overridden by env vars (see .env.example).
+# The agent also accepts output_dir at invocation time.
+
+# Root output directory (env: OUTPUT_DIR)
+output_dir: /data/outputs
+
+# Input attachments directory (env: ATTACHMENTS_DIR)
+input_dir: /data/attachments
+
+# Session workspace base (env: WORKSPACE_BASE_DIR)
+workspace_base: /data/workspace
+
+# Output folder structure per project:
+#   {output_dir}/{project_name}/
+#   ├── BRD/
+#   │   └── {project_name}_BRD_v{version}.docx
+#   └── WBS/
+#       └── {project_name}_WBS_v{version}.xlsx
+folder_structure:
+  brd_subdir: BRD
+  wbs_subdir: WBS
+  filename_pattern: "{project_name}_{doc_type}_v{version_underscore}.{ext}"
+
+# S3/MinIO upload (env: ENABLE_S3_UPLOAD)
+s3_upload: false
+
+# Human-in-the-loop before export (env: ENABLE_HITL)
+enable_hitl: true
+
+# Max critic retry loops before escalating to user (env: MAX_CRITIC_RETRIES)
+max_critic_retries: 3

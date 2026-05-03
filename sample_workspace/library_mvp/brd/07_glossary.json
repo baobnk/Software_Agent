@@ -1,0 +1,8 @@
+{
+  "glossary": [
+    {
+      "term": "HTMX",
+      "definition": "A JavaScript library for dynamic web interfaces without heavy front-end frameworks."
+    }
+  ]
+}

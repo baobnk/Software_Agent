@@ -1,0 +1,18 @@
+{
+  "section_id": "f4fe1da5-a5b5-4c3b-84cb-fb945b146481",
+  "fr_id": "FR3",
+  "name": "Public Search",
+  "priority": "High",
+  "short_description": "Allow public users to search the book catalog.",
+  "description": "Any site visitor must be able to search for books by keywords, title, or author without authentication. Quick, responsive search improves the library's accessibility and helps patrons find materials efficiently. The search interface will be available on the main public web page.",
+  "user_stories": [
+    "As a visitor, I want to search for books so that I can find materials of interest without staff assistance.",
+    "As a librarian, I want the public catalog to be accurate and up to date.",
+    "As a parent, I want my children to search safely without logging in."
+  ],
+  "acceptance_criteria": [
+    "Given a keyword, When a search is performed, Then the top 10 relevant books are shown within 2 seconds.",
+    "Given new catalog entries, When they are added, Then they are immediately searchable by the public."
+  ],
+  "interface_notes": "Public-facing catalog search page (read-only, no login; real-time filtering via HTMX)."
+}

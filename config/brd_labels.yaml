@@ -1,0 +1,253 @@
+# BnK BRD section labels per language.
+# Used by scripts/build_brd_template.py to emit one .docx template per language.
+# Add a new language by appending a top-level key with the same schema.
+#
+# Body content (purpose, FR descriptions, etc.) is filled at render time and
+# can be in any language — labels here only affect structural section titles.
+
+en:
+  doc_type: BUSINESS REQUIREMENTS DOCUMENT
+  doc_info: Document Information
+  version_history: Version History
+  toc: TABLE OF CONTENTS
+  prepared_for: Prepared for
+  version: Version
+  author: Author
+  created_at: Date
+  copyright: "© BnK Solution"
+  # Section titles
+  s1: 1. INTRODUCTION
+  s1_1: 1.1 Purpose
+  s1_2: 1.2 Intended Audience
+  s2: 2. BUSINESS CONTEXT
+  s2_1: 2.1 Background
+  s2_2: 2.2 Objectives
+  s2_3: 2.3 Constraints & Assumptions
+  s2_3_1: 2.3.1 Constraints
+  s2_3_2: 2.3.2 Assumptions
+  s3: 3. PROJECT SCOPE
+  s3_1: 3.1 In Scope
+  s3_2: 3.2 Out of Scope
+  s4: 4. STAKEHOLDERS
+  s5: 5. BUSINESS REQUIREMENTS
+  s5_1: 5.1 Functional Requirements Overview
+  s5_2: 5.2 Functional Requirements Detail
+  s5_3: 5.3 Non-Functional Requirements
+  s5_4: 5.4 Data Requirements
+  s5_5: 5.5 Integration Requirements
+  s6: 6. ACCEPTANCE CRITERIA
+  s7: 7. GLOSSARY & ABBREVIATIONS
+  s7_1: 7.1 Glossary
+  s7_2: 7.2 Abbreviations
+  s8: 8. APPENDIX
+  s8_items: Reference Materials
+  # FR sub-section labels
+  fr_description: Description
+  fr_priority: Priority
+  fr_user_stories: User Stories
+  fr_acceptance: Acceptance Criteria
+  fr_interface: Interface Notes
+  # Table headers
+  th_version: Version
+  th_date: Date
+  th_description: Description of Changes
+  th_author: Author
+  th_id: ID
+  th_name: Name
+  th_role: Role
+  th_party: Party
+  th_responsibility: Responsibility
+  th_priority: Priority
+  th_short: Short Description
+  th_category: Category
+  th_metric: Metric
+  th_target: Target
+  th_system: System
+  th_direction: Direction
+  th_protocol: Protocol
+  th_note: Note
+  th_term: Term
+  th_definition: Definition
+
+vi:
+  doc_type: TÀI LIỆU YÊU CẦU NGHIỆP VỤ
+  doc_info: Thông tin tài liệu
+  version_history: Lịch sử phiên bản
+  toc: MỤC LỤC
+  prepared_for: Lập cho
+  version: Phiên bản
+  author: Tác giả
+  created_at: Ngày
+  copyright: "© BnK Solution"
+  s1: 1. GIỚI THIỆU
+  s1_1: 1.1 Mục đích
+  s1_2: 1.2 Đối tượng độc giả
+  s2: 2. BỐI CẢNH NGHIỆP VỤ
+  s2_1: 2.1 Bối cảnh
+  s2_2: 2.2 Mục tiêu dự án
+  s2_3: 2.3 Ràng buộc & Giả định
+  s2_3_1: 2.3.1 Ràng buộc
+  s2_3_2: 2.3.2 Giả định
+  s3: 3. PHẠM VI DỰ ÁN
+  s3_1: 3.1 Trong phạm vi
+  s3_2: 3.2 Ngoài phạm vi
+  s4: 4. CÁC BÊN LIÊN QUAN
+  s5: 5. YÊU CẦU NGHIỆP VỤ
+  s5_1: 5.1 Tổng quan yêu cầu chức năng
+  s5_2: 5.2 Chi tiết yêu cầu chức năng
+  s5_3: 5.3 Yêu cầu phi chức năng
+  s5_4: 5.4 Yêu cầu dữ liệu
+  s5_5: 5.5 Yêu cầu tích hợp
+  s6: 6. TIÊU CHÍ NGHIỆM THU
+  s7: 7. THUẬT NGỮ & TỪ VIẾT TẮT
+  s7_1: 7.1 Thuật ngữ
+  s7_2: 7.2 Từ viết tắt
+  s8: 8. PHỤ LỤC
+  s8_items: Tài liệu tham khảo
+  fr_description: Mô tả
+  fr_priority: Mức ưu tiên
+  fr_user_stories: User Stories
+  fr_acceptance: Tiêu chí chấp nhận
+  fr_interface: Ghi chú giao diện
+  th_version: Phiên bản
+  th_date: Ngày
+  th_description: Mô tả thay đổi
+  th_author: Tác giả
+  th_id: ID
+  th_name: Tên
+  th_role: Vai trò
+  th_party: Đơn vị
+  th_responsibility: Trách nhiệm
+  th_priority: Ưu tiên
+  th_short: Mô tả ngắn
+  th_category: Hạng mục
+  th_metric: Chỉ tiêu
+  th_target: Mục tiêu
+  th_system: Hệ thống
+  th_direction: Chiều
+  th_protocol: Giao thức
+  th_note: Ghi chú
+  th_term: Thuật ngữ
+  th_definition: Định nghĩa
+
+ja:
+  doc_type: ビジネス要件定義書
+  doc_info: 文書情報
+  version_history: 改訂履歴
+  toc: 目次
+  prepared_for: 提出先
+  version: バージョン
+  author: 作成者
+  created_at: 日付
+  copyright: "© BnK Solution"
+  s1: 1. はじめに
+  s1_1: 1.1 目的
+  s1_2: 1.2 対象読者
+  s2: 2. 業務背景
+  s2_1: 2.1 背景
+  s2_2: 2.2 目標
+  s2_3: 2.3 制約と前提
+  s2_3_1: 2.3.1 制約事項
+  s2_3_2: 2.3.2 前提条件
+  s3: 3. プロジェクト範囲
+  s3_1: 3.1 範囲内
+  s3_2: 3.2 範囲外
+  s4: 4. 関係者
+  s5: 5. 業務要件
+  s5_1: 5.1 機能要件 概要
+  s5_2: 5.2 機能要件 詳細
+  s5_3: 5.3 非機能要件
+  s5_4: 5.4 データ要件
+  s5_5: 5.5 連携要件
+  s6: 6. 受入基準
+  s7: 7. 用語集・略語
+  s7_1: 7.1 用語集
+  s7_2: 7.2 略語一覧
+  s8: 8. 付録
+  s8_items: 参照資料
+  fr_description: 説明
+  fr_priority: 優先度
+  fr_user_stories: ユーザーストーリー
+  fr_acceptance: 受入基準
+  fr_interface: インターフェース注記
+  th_version: バージョン
+  th_date: 日付
+  th_description: 変更内容
+  th_author: 作成者
+  th_id: ID
+  th_name: 名前
+  th_role: 役割
+  th_party: 所属
+  th_responsibility: 責任
+  th_priority: 優先度
+  th_short: 概要
+  th_category: カテゴリ
+  th_metric: 指標
+  th_target: 目標値
+  th_system: システム
+  th_direction: 方向
+  th_protocol: プロトコル
+  th_note: 備考
+  th_term: 用語
+  th_definition: 定義
+
+zh:
+  doc_type: 业务需求文档
+  doc_info: 文档信息
+  version_history: 版本历史
+  toc: 目录
+  prepared_for: 提交对象
+  version: 版本
+  author: 作者
+  created_at: 日期
+  copyright: "© BnK Solution"
+  s1: 1. 引言
+  s1_1: 1.1 目的
+  s1_2: 1.2 目标读者
+  s2: 2. 业务背景
+  s2_1: 2.1 背景
+  s2_2: 2.2 目标
+  s2_3: 2.3 约束与假设
+  s2_3_1: 2.3.1 约束
+  s2_3_2: 2.3.2 假设
+  s3: 3. 项目范围
+  s3_1: 3.1 范围内
+  s3_2: 3.2 范围外
+  s4: 4. 相关方
+  s5: 5. 业务需求
+  s5_1: 5.1 功能需求概览
+  s5_2: 5.2 功能需求详情
+  s5_3: 5.3 非功能需求
+  s5_4: 5.4 数据需求
+  s5_5: 5.5 集成需求
+  s6: 6. 验收标准
+  s7: 7. 术语与缩写
+  s7_1: 7.1 术语表
+  s7_2: 7.2 缩写与缩略语
+  s8: 8. 附录
+  s8_items: 参考资料
+  fr_description: 描述
+  fr_priority: 优先级
+  fr_user_stories: 用户故事
+  fr_acceptance: 验收标准
+  fr_interface: 接口说明
+  th_version: 版本
+  th_date: 日期
+  th_description: 变更说明
+  th_author: 作者
+  th_id: ID
+  th_name: 名称
+  th_role: 角色
+  th_party: 所属
+  th_responsibility: 职责
+  th_priority: 优先级
+  th_short: 简要描述
+  th_category: 类别
+  th_metric: 指标
+  th_target: 目标
+  th_system: 系统
+  th_direction: 方向
+  th_protocol: 协议
+  th_note: 备注
+  th_term: 术语
+  th_definition: 定义

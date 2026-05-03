@@ -1,0 +1,17 @@
+{
+  "row_num": null,
+  "ref_code": null,
+  "parent_code": "III.A",
+  "hierarchy_level": 4,
+  "code": "III.A-01",
+  "feature": "Functional Test of CRUD and Search APIs",
+  "description": "Test backend APIs for book management and search feature.",
+  "remark": "",
+  "md_be": 1.0,
+  "md_fe": 1.0,
+  "md_ba": 0,
+  "md_qc": 0,
+  "md_pm": 0,
+  "source_feature_id": "FR1",
+  "source_section_id": null
+}

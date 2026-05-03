@@ -1,0 +1,32 @@
+[
+  {
+    "severity": "error",
+    "code": "TRACE_ORPHAN_TASK",
+    "message": "Task II.A.1-02 references non-existent FR2",
+    "section_id": ""
+  },
+  {
+    "severity": "error",
+    "code": "TRACE_ORPHAN_TASK",
+    "message": "Task II.A.2-01 references non-existent FR3",
+    "section_id": ""
+  },
+  {
+    "severity": "error",
+    "code": "TRACE_ORPHAN_TASK",
+    "message": "Task II.B.2-01 references non-existent FR3",
+    "section_id": ""
+  },
+  {
+    "severity": "error",
+    "code": "TRACE_ORPHAN_TASK",
+    "message": "Task III.B-01 references non-existent FR4",
+    "section_id": ""
+  },
+  {
+    "severity": "error",
+    "code": "TRACE_ORPHAN_TASK",
+    "message": "Task III.B-02 references non-existent FR4",
+    "section_id": ""
+  }
+]

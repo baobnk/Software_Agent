@@ -1,0 +1,8 @@
+{
+  "background": "Libraries require simple, reliable digital systems to manage book catalogs, borrowing operations, and user searches. Current processes are manual, leading to inefficiency, human error, and poor reporting. The proposed system modernizes these operations for a small, on-premises setting.",
+  "objectives": "1. Digitize catalog management and tracking of book loans and returns\n2. Enable library staff to quickly update records and generate reports\n3. Provide public users with access to a searchable book catalog",
+  "constraints": [],
+  "assumptions": [
+    "Internet access is available for updates but not for core operation."
+  ]
+}

@@ -1,0 +1,3 @@
+{
+  "data_requirements": "Book records: title, author, ISBN, publication year, copy count; Loan records: borrower, checkout/return date, due date, overdue status; User records: name, contact info (for staff); Audit logs for catalog and loan changes."
+}

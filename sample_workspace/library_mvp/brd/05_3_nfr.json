@@ -1,0 +1,9 @@
+{
+  "nfr_rows": [
+    {
+      "category": "Data Retention",
+      "metric": "Loan and catalog record retention",
+      "target": "12 months minimum"
+    }
+  ]
+}

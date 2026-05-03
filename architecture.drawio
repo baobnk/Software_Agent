@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BnK-DeepAgent-architect" version="24.0.0" type="device">
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 1: SYSTEM ARCHITECTURE (production multi-agent design)      -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <diagram name="1. System Architecture" id="page-system-arch">
+    <mxGraphModel dx="2400" dy="1800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1750" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="BnK DeepAgent — Production Multi-Agent Architecture (v2: Pre-processing + 3 Workflows)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#1A1A1A;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Pre-processing (Requirement + Solution agents with chat feedback loop) → 3 independent workflows (BRD/WBS/Proposal) · Multi-tenant · Subprocess-isolated rendering" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=13;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="2120" height="24" as="geometry"/>
+        </mxCell>
+
+        <!-- ① CLIENTS -->
+        <mxCell id="L1-bg" value="① CLIENTS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="2120" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="cli" value="CLI&#xa;python main.py --input ./req --output ./out" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1"><mxGeometry x="80" y="135" width="280" height="55" as="geometry"/></mxCell>
+        <mxCell id="webui" value="Web UI (assistant-ui / Next.js)&#xa;Chat + diagram preview + HITL approval" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="400" y="135" width="320" height="55" as="geometry"/></mxCell>
+        <mxCell id="curl" value="REST clients (cURL / Postman)&#xa;Programmatic integration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1"><mxGeometry x="760" y="135" width="280" height="55" as="geometry"/></mxCell>
+        <mxCell id="lg-studio" value="LangGraph Studio&#xa;Visualize + debug agent runs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1080" y="135" width="280" height="55" as="geometry"/></mxCell>
+        <mxCell id="langfuse" value="Langfuse / OpenTelemetry&#xa;Trace + cost tracking" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1400" y="135" width="280" height="55" as="geometry"/></mxCell>
+        <mxCell id="cron" value="Schedulers&#xa;Daily batch / cron-driven" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="1"><mxGeometry x="1720" y="135" width="280" height="55" as="geometry"/></mxCell>
+
+        <!-- ② API GATEWAY -->
+        <mxCell id="L2-bg" value="② API GATEWAY (FastAPI + SSE for chat-based feedback loop)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="2120" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="api-sessions" value="POST /sessions&#xa;Create session + workspace" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1"><mxGeometry x="80" y="255" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="api-files" value="POST /sessions/{id}/files&#xa;Upload requirement files" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1"><mxGeometry x="320" y="255" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="api-analyze" value="POST /sessions/{id}/analyze&#xa;Trigger Requirement Agent&#xa;(then Solution Agent)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="560" y="255" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="api-chat" value="POST /sessions/{id}/chat (SSE)&#xa;★ Chat with Solution Agent&#xa;(feedback loop, refine solution)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="800" y="255" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="api-diagram" value="GET /sessions/{id}/diagram&#xa;Stream drawio XML preview&#xa;(updated after each refine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1040" y="255" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="api-workflow" value="POST /sessions/{id}/run&#xa;{workflow: brd|wbs|proposal}&#xa;Reads approved solution" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1280" y="255" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="api-approve" value="POST /sessions/{id}/approve&#xa;Resume after HITL gate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1520" y="255" width="220" height="70" as="geometry"/></mxCell>
+        <mxCell id="api-outputs" value="GET /sessions/{id}/outputs&#xa;List artifacts + presigned URLs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1760" y="255" width="220" height="70" as="geometry"/></mxCell>
+
+        <!-- ③ ORCHESTRATION CORE -->
+        <mxCell id="L3-bg" value="③ ORCHESTRATION CORE (per session, multi-tenant, lazy LLM client)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="2120" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="session-mgr" value="Session Manager&#xa;UUID · tenant_id · workspace dir" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1"><mxGeometry x="80" y="395" width="240" height="80" as="geometry"/></mxCell>
+        <mxCell id="workflow-reg" value="Workflow Registry&#xa;@register(&quot;requirement&quot;)&#xa;@register(&quot;solution&quot;)&#xa;@register(&quot;brd&quot;) @(&quot;wbs&quot;) @(&quot;proposal&quot;)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="340" y="395" width="280" height="80" as="geometry"/></mxCell>
+        <mxCell id="llm-factory" value="LLM Factory (lazy, per-session)&#xa;provider · api_key from session.request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1"><mxGeometry x="640" y="395" width="280" height="80" as="geometry"/></mxCell>
+        <mxCell id="hitl-mgr" value="HITL + Chat Manager&#xa;interrupt_on for render_*&#xa;Conversational refinement loop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="940" y="395" width="240" height="80" as="geometry"/></mxCell>
+        <mxCell id="ws-mgr" value="Workspace Manager&#xa;CompositeFilesystemBackend&#xa;TTL cleanup 24h" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1200" y="395" width="240" height="80" as="geometry"/></mxCell>
+        <mxCell id="checkpoint" value="Checkpointer&#xa;AsyncPostgresSaver&#xa;Restart-safe + HITL resume" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1460" y="395" width="240" height="80" as="geometry"/></mxCell>
+        <mxCell id="rate-limit" value="Rate Limiter + Queue&#xa;Per-tenant token bucket&#xa;Backpressure" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1720" y="395" width="240" height="80" as="geometry"/></mxCell>
+
+        <!-- ④ NEW: PRE-PROCESSING (Requirement + Solution agents) -->
+        <mxCell id="L4-bg" value="④ PRE-PROCESSING — runs BEFORE downstream workflows. Output is consumed by all 3 workflows (BRD/WBS/Proposal)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="500" width="2120" height="290" as="geometry"/>
+        </mxCell>
+
+        <!-- Requirement Agent (NEW) -->
+        <mxCell id="req-agent" value="REQUIREMENT AGENT&#xa;(claude-sonnet-4-6)&#xa;━━━━━━━━━━━━━&#xa;EXTRACTS from input files:&#xa;• Business context + goals&#xa;• Stakeholders + roles&#xa;• Functional requirements (raw FRs)&#xa;• Non-functional requirements&#xa;• Constraints (budget, timeline,&#xa;  compliance, tech stack)&#xa;• Existing systems + integrations&#xa;• Domain (banking, insurance, ...)&#xa;• Scale + data volume&#xa;━━━━━━━━━━━━━&#xa;HITL: asks clarifying Qs if missing&#xa;critical info (max 5 questions)&#xa;━━━━━━━━━━━━━&#xa;Output: requirement_analysis.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;fontStyle=1;align=left;spacingLeft=12;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="540" width="380" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Solution Proposal Agent (NEW) - the bigger one with chat loop -->
+        <mxCell id="sol-agent" value="SOLUTION PROPOSAL AGENT (claude-sonnet-4-6)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;PROPOSES technical solution:&#xa;• Architecture pattern (mono / micro / serverless / hybrid) + rationale + alternatives&#xa;• Tech stack per layer (BE / FE / DB / cache / queue / search / AI / infra)&#xa;• Deployment topology (cloud / on-prem / hybrid · sizing · HA · DR)&#xa;• Integration patterns (gateway / ESB / event-driven / direct)&#xa;• Data architecture (schema strategy · retention · backup)&#xa;• Module decomposition (high-level)&#xa;• Security architecture (auth · encryption · secrets · audit · domain rules)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;DRAWS DIAGRAMS via MCP drawio:&#xa;• mcp__drawio__create_new_diagram   (system context)&#xa;• mcp__drawio__edit_diagram         (component + sequence)&#xa;• mcp__drawio__export_diagram       (PNG/SVG preview)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Output: solution.json + diagrams/{system_context,component,sequence,deployment}.drawio" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;fontStyle=1;align=left;spacingLeft=12;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="500" y="540" width="900" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Chat Feedback Loop visualization -->
+        <mxCell id="chat-loop" value="💬 CHAT FEEDBACK LOOP (the differentiator)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;User → Web UI chat → SSE stream:&#xa;  &quot;Thay PostgreSQL bằng MongoDB&quot;&#xa;  &quot;Thêm Redis cache cho session&quot;&#xa;  &quot;Đổi sang microservices&quot;&#xa;  &quot;Bỏ message queue, dùng REST&quot;&#xa;  &quot;Tăng team thêm 1 BE&quot;&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Solution Agent reacts:&#xa;✓ Edits solution.json (atomic patch)&#xa;✓ Updates drawio via mcp__drawio__edit_diagram&#xa;✓ Re-validates against constraints&#xa;✓ Streams diff + new diagram preview&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;User: &quot;OK approve&quot; → unlock downstream workflows&#xa;Iteration count + diff history saved" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;align=left;spacingLeft=12;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1440" y="540" width="700" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Output of pre-processing -->
+        <mxCell id="preprocess-output" value="✅ APPROVED FOUNDATION (consumed by ALL 3 workflows)&#xa;requirement_analysis.json · solution.json · diagrams/*.drawio · chat_history.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="500" y="800" width="1640" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- ⑤ WORKFLOW LAYER (3 workflows, simplified — no longer do discovery/architecture) -->
+        <mxCell id="L5-bg" value="⑤ WORKFLOW LAYER — 3 independent DeepAgents that READ approved foundation (no redundant discovery)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="860" width="2120" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- BRD Workflow swimlane (simplified) -->
+        <mxCell id="brd-wf" value="BRD WORKFLOW · 4 phases" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;fontStyle=1;align=center;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="895" width="660" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="brd-orch" value="Orchestrator (StateGraph) — reads requirement + solution from upstream" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad7ac;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="100" y="930" width="620" height="35" as="geometry"/></mxCell>
+        <mxCell id="brd-sa1" value="P1 section_drafter&#xa;Background, Objectives, Scope phases,&#xa;Stakeholders, Business Rules, FRs, NFR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="100" y="975" width="300" height="65" as="geometry"/></mxCell>
+        <mxCell id="brd-sa2" value="P2 critic_agent&#xa;Validate (FR_DUPLICATE,&#xa;NFR_NO_TARGET, ...)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="410" y="975" width="155" height="65" as="geometry"/></mxCell>
+        <mxCell id="brd-sa3" value="P3 refiner&#xa;Tone, numbering" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="575" y="975" width="145" height="65" as="geometry"/></mxCell>
+        <mxCell id="brd-sa4" value="P4 exporter&#xa;render .docx via subprocess (docxtpl)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="100" y="1050" width="620" height="35" as="geometry"/></mxCell>
+        <mxCell id="brd-state" value="BRDState · brd_doc · issues · revision_count" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad7ac;strokeColor=#d79b00;fontSize=10;fontStyle=2;" vertex="1" parent="1"><mxGeometry x="100" y="1095" width="620" height="25" as="geometry"/></mxCell>
+
+        <!-- WBS Workflow swimlane (simplified to 9 phases since discovery+architecture done upstream) -->
+        <mxCell id="wbs-wf" value="WBS WORKFLOW · 9 phases (P1=module decomp · P2=task breakdown · P3=effort · P4=phase plan · P5=timeline · P6=cost · P7=validation · P8=template fill · P9=finalize)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1;align=center;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="760" y="895" width="700" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="wbs-orch" value="Orchestrator (StateGraph) — reads requirement + solution; skips P0 discovery (done upstream)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad7ac;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="780" y="950" width="660" height="35" as="geometry"/></mxCell>
+        <mxCell id="wbs-p1" value="P1 module decomp&#xa;5 tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="780" y="995" width="155" height="40" as="geometry"/></mxCell>
+        <mxCell id="wbs-p2" value="P2 task breakdown&#xa;22 tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="945" y="995" width="155" height="40" as="geometry"/></mxCell>
+        <mxCell id="wbs-p3" value="P3 effort estimator&#xa;16 tools · benchmarks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1110" y="995" width="155" height="40" as="geometry"/></mxCell>
+        <mxCell id="wbs-p4" value="P4-P5 phase + timeline&#xa;18 tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1275" y="995" width="155" height="40" as="geometry"/></mxCell>
+        <mxCell id="wbs-p6" value="P6 cost · 10 tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="780" y="1045" width="200" height="35" as="geometry"/></mxCell>
+        <mxCell id="wbs-p7" value="P7 validator · 10 tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="990" y="1045" width="200" height="35" as="geometry"/></mxCell>
+        <mxCell id="wbs-p8" value="P8 template_filler · 12 tools (openpyxl)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="1200" y="1045" width="240" height="35" as="geometry"/></mxCell>
+        <mxCell id="wbs-state" value="WBSState · wbs_doc · timeline · cost · domain_profile (75 tools total)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad7ac;strokeColor=#d79b00;fontSize=10;fontStyle=2;" vertex="1" parent="1"><mxGeometry x="780" y="1090" width="660" height="30" as="geometry"/></mxCell>
+
+        <!-- Proposal Workflow swimlane -->
+        <mxCell id="prop-wf" value="PROPOSAL WORKFLOW · reads requirement + solution + diagrams + cost" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;fontStyle=1;align=center;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="895" width="660" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="prop-orch" value="Orchestrator — reuses solution diagrams from upstream pre-processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad7ac;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1500" y="950" width="620" height="35" as="geometry"/></mxCell>
+        <mxCell id="prop-sa1" value="executive_summary" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1500" y="995" width="190" height="40" as="geometry"/></mxCell>
+        <mxCell id="prop-sa2" value="solution_pitcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1700" y="995" width="190" height="40" as="geometry"/></mxCell>
+        <mxCell id="prop-sa3" value="case_study (RAG)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1900" y="995" width="220" height="40" as="geometry"/></mxCell>
+        <mxCell id="prop-sa4" value="pricing_agent (reads cost.json)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1500" y="1045" width="300" height="35" as="geometry"/></mxCell>
+        <mxCell id="prop-sa5" value="slide_layouter + exporter (python-pptx · subprocess)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1810" y="1045" width="310" height="35" as="geometry"/></mxCell>
+        <mxCell id="prop-state" value="ProposalState · slides · diagrams (reused) · pricing_tiers · template_path" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fad7ac;strokeColor=#d79b00;fontSize=10;fontStyle=2;" vertex="1" parent="1"><mxGeometry x="1500" y="1090" width="620" height="30" as="geometry"/></mxCell>
+
+        <!-- ⑥ TOOLS LAYER -->
+        <mxCell id="L6-bg" value="⑥ ATOMIC TOOLS LAYER (~170 tools total) — Pydantic-validated, idempotent, section_id-keyed for incremental patches" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1160" width="2120" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="t-req" value="requirement_ops (NEW)&#xa;extract_business_context, stakeholders,&#xa;constraints, domain, ask_clarify_q" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="80" y="1200" width="280" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-solution" value="solution_ops (NEW)&#xa;propose_arch, tech_stack, deploy,&#xa;integration, evaluate_alternatives, refine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="370" y="1200" width="280" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-mcpdrawio" value="mcp_drawio_ops (NEW)&#xa;create_diagram, edit_diagram,&#xa;export_diagram (PNG/SVG/XML)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="660" y="1200" width="280" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-filereader" value="file_reader&#xa;PDF/DOCX/PPTX/XLSX/MD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1"><mxGeometry x="950" y="1200" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-brdops" value="brd_ops&#xa;init_brd, set_*, upsert_fr, set_nfr" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1180" y="1200" width="240" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-wbsops" value="wbs_ops + task_ops&#xa;upsert_task, define_module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1430" y="1200" width="240" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-effort" value="effort_ops + timeline_ops&#xa;score_complexity, multipliers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1680" y="1200" width="280" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-templfill" value="template_filler&#xa;openpyxl fill BnK xlsx" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="80" y="1270" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-validator" value="validators&#xa;BRD/WBS/traceability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1"><mxGeometry x="310" y="1270" width="200" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-folder" value="folder_manager&#xa;OUTPUT_DIR control · S3 upload" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1"><mxGeometry x="520" y="1270" width="240" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-renderer" value="renderer (subprocess pool)&#xa;render_brd_docx · render_wbs_xlsx · render_pptx" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="770" y="1270" width="320" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-websearch" value="websearch_ops + rag_ops&#xa;Tavily · FAISS over BnK history" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1100" y="1270" width="280" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-hitl" value="hitl_ops&#xa;ask_user · request_approval · chat" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1390" y="1270" width="240" height="60" as="geometry"/></mxCell>
+        <mxCell id="t-domain" value="domain_rules + benchmark_ops&#xa;26 industries · effort medians" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1"><mxGeometry x="1640" y="1270" width="320" height="60" as="geometry"/></mxCell>
+
+        <!-- ⑦ INFRASTRUCTURE -->
+        <mxCell id="L7-bg" value="⑦ INFRASTRUCTURE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1360" width="1080" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="subproc-pool" value="Subprocess Pool&#xa;BRD: docxtpl render&#xa;WBS: openpyxl fill+save&#xa;PROPOSAL: python-pptx render&#xa;DRAWIO: export PNG/SVG&#xa;Crash-isolated · JSON I/O" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1"><mxGeometry x="80" y="1400" width="240" height="105" as="geometry"/></mxCell>
+        <mxCell id="mcp-host" value="MCP Host (NEW)&#xa;Manages drawio MCP session per&#xa;Solution Agent invocation&#xa;Streams diagram updates back to UI&#xa;via SSE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="335" y="1400" width="240" height="105" as="geometry"/></mxCell>
+        <mxCell id="vector-store" value="Vector Store (FAISS)&#xa;Index over BnK BRD/WBS/Proposal/&#xa;Embeddings: text-embedding-3-small&#xa;Used by Requirement &amp; Solution&#xa;agents for similar projects" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1"><mxGeometry x="590" y="1400" width="240" height="105" as="geometry"/></mxCell>
+        <mxCell id="config-loader" value="Config Loader (YAML)&#xa;domain_rules.yaml (26)&#xa;effort_benchmarks.json&#xa;agent_models.yaml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1"><mxGeometry x="850" y="1400" width="245" height="105" as="geometry"/></mxCell>
+
+        <!-- ⑧ STORAGE -->
+        <mxCell id="L8-bg" value="⑧ STORAGE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="1360" width="1020" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="db-pg" value="PostgreSQL&#xa;Checkpoint state&#xa;Sessions metadata" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1180" y="1400" width="190" height="105" as="geometry"/></mxCell>
+        <mxCell id="db-redis" value="Redis&#xa;Session cache&#xa;SSE pub/sub&#xa;Rate limit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1390" y="1400" width="190" height="105" as="geometry"/></mxCell>
+        <mxCell id="db-s3" value="S3 / MinIO&#xa;Rendered .docx/.xlsx/.pptx&#xa;Diagrams .drawio/.png&#xa;7-day TTL artifacts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1600" y="1400" width="190" height="105" as="geometry"/></mxCell>
+        <mxCell id="db-fs" value="Filesystem&#xa;workspace/{session_id}/&#xa;OUTPUT_DIR (user-controlled)&#xa;templates/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1810" y="1400" width="200" height="105" as="geometry"/></mxCell>
+        <mxCell id="ext-llm" value="External LLM&#xa;Anthropic&#xa;OpenAI&#xa;Google" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1"><mxGeometry x="2030" y="1400" width="120" height="105" as="geometry"/></mxCell>
+
+        <!-- LEGEND -->
+        <mxCell id="legend" value="LEGEND&#xa;🟦 Client · 🟩 API/Orchestration · 🟪 Pre-processing (Requirement + Solution) · 🟧 Workflows (BRD/WBS/Proposal) · 🟪 Tools · 🟥 Infra · ⬜ Storage&#xa;★ The 2 NEW pre-processing agents replace redundant discovery phases inside individual workflows. Solution Agent has chat feedback loop + MCP drawio." style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#888888;fontSize=11;align=left;verticalAlign=middle;spacingLeft=14;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1550" width="2120" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- EDGES -->
+        <mxCell id="e-cli-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#6c8ebf;" edge="1" source="cli" target="api-sessions" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-web-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#6c8ebf;strokeWidth=2;" edge="1" source="webui" target="api-chat" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-curl-api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#6c8ebf;" edge="1" source="curl" target="api-workflow" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e-api-session" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#82b366;" edge="1" source="api-sessions" target="session-mgr" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-api-analyze" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#82b366;strokeWidth=2;" edge="1" source="api-analyze" target="workflow-reg" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-api-chat" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#82b366;strokeWidth=3;" edge="1" source="api-chat" target="hitl-mgr" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-api-wf" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#82b366;strokeWidth=2;" edge="1" source="api-workflow" target="workflow-reg" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Orchestration → Pre-processing -->
+        <mxCell id="e-reg-req" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.3;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#7B68A6;strokeWidth=2;" edge="1" source="workflow-reg" target="req-agent" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-hitl-sol" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#d6b656;strokeWidth=3;" edge="1" source="hitl-mgr" target="sol-agent" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-llm-req" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.3;exitY=1;entryX=0.7;entryY=0;endArrow=classic;strokeColor=#d6b656;" edge="1" source="llm-factory" target="req-agent" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-llm-sol" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.7;exitY=1;entryX=0.3;entryY=0;endArrow=classic;strokeColor=#d6b656;" edge="1" source="llm-factory" target="sol-agent" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Requirement → Solution flow -->
+        <mxCell id="e-req-sol" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#7B68A6;strokeWidth=3;" edge="1" source="req-agent" target="sol-agent" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Chat feedback loop visualization -->
+        <mxCell id="e-sol-chat" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#d6b656;strokeWidth=3;dashed=1;" edge="1" source="sol-agent" target="chat-loop" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+          <mxCell id="chat-label" value="iterate" style="text;align=center;verticalAlign=middle;fontStyle=2;fontSize=10;fontColor=#aa6c00;" vertex="1" connectable="0"/>
+        </mxCell>
+
+        <!-- Pre-processing → output -->
+        <mxCell id="e-sol-output" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#82b366;strokeWidth=2;" edge="1" source="sol-agent" target="preprocess-output" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Output → 3 workflows -->
+        <mxCell id="e-output-brd" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.2;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#d79b00;strokeWidth=2;" edge="1" source="preprocess-output" target="brd-wf" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-output-wbs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#d79b00;strokeWidth=2;" edge="1" source="preprocess-output" target="wbs-wf" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-output-prop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.8;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#d79b00;strokeWidth=2;" edge="1" source="preprocess-output" target="prop-wf" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Pre-processing → MCP -->
+        <mxCell id="e-sol-mcp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#b85450;strokeWidth=2;dashed=1;" edge="1" source="t-mcpdrawio" target="mcp-host" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Workflows → tools -->
+        <mxCell id="e-brd-tools" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#9673a6;" edge="1" source="brd-state" target="t-brdops" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-wbs-tools" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#9673a6;" edge="1" source="wbs-state" target="t-effort" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-prop-tools" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#9673a6;" edge="1" source="prop-state" target="t-renderer" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e-renderer-subp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#b85450;strokeWidth=2;" edge="1" source="t-renderer" target="subproc-pool" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-checkpoint-pg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=classic;strokeColor=#666666;" edge="1" source="checkpoint" target="db-pg" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 2: WBS WORKFLOW PIPELINE (now 9 phases, simplified)         -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <diagram name="2. WBS Pipeline (9 phases)" id="page-wbs-pipeline">
+    <mxGraphModel dx="2400" dy="1600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2600" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="p2-title" value="WBS WORKFLOW — 9 Phases × 75 Atomic Tools (consumes upstream Requirement + Solution)" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2520" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2-sub" value="P0 (Discovery) and P0.5 (Solution Architecture) MOVED upstream to dedicated Requirement &amp; Solution agents. WBS workflow starts at module decomposition." style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#555;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="2520" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Foundation banner -->
+        <mxCell id="foundation" value="📥 FOUNDATION (read from upstream pre-processing): requirement_analysis.json · solution.json · diagrams/*.drawio" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="40" y="95" width="2520" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="wp1" value="P1 · MODULE DECOMP&#xa;module_decomposer · 5 tools&#xa;━━━━━━━━━&#xa;define_module&#xa;link_fr_to_module&#xa;define_module_dependency&#xa;identify_shared_component&#xa;set_module_complexity&#xa;━━━━━━━━━&#xa;Reads: solution.json&#xa;Output: modules.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="220" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp2" value="P2 · TASK BREAKDOWN&#xa;task_breakdown · 22 tools&#xa;━━━━━━━━━&#xa;4A Setup (4)&#xa;4B Per-module (8)&#xa;4C Cross-cutting (10)&#xa;━━━━━━━━━&#xa;Domain mandatory tasks&#xa;auto-injected (banking →&#xa;pen_test, cab_approval, …)&#xa;━━━━━━━━━&#xa;Output: wbs_tasks.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="280" y="160" width="220" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp3" value="P3 · EFFORT ESTIMATE&#xa;effort_estimator · 16 tools&#xa;━━━━━━━━━&#xa;set_baseline · score · lookup_benchmark&#xa;apply_domain_multiplier&#xa;apply_seniority · risk · learning_curve&#xa;compute_qc/ba/pm/devops/security&#xa;finalize_task_efforts&#xa;━━━━━━━━━&#xa;⚙ Reads benchmarks JSON&#xa;⚙ Reads domain_rules YAML" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="160" width="220" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp4" value="P4 · PHASE PLANNING&#xa;phase_planner · 10 tools&#xa;━━━━━━━━━&#xa;Setup, Design, Development,&#xa;System test, Integration test,&#xa;UAT, Deployment, Documentation,&#xa;Training, Hypercare&#xa;━━━━━━━━━&#xa;Standard split: 8/80/12%" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="760" y="160" width="220" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp5" value="P5 · TIMELINE&#xa;timeline_planner · 8 tools&#xa;━━━━━━━━━&#xa;set_sprint_config&#xa;assign_task_to_sprint&#xa;define_milestone&#xa;compute_critical_path&#xa;compute_calendar_timeline&#xa;validate_vs_deadline&#xa;generate_resource_allocation&#xa;━━━━━━━━━&#xa;Output: timeline.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="160" width="220" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp6" value="P6 · COST&#xa;cost_calculator · 10 tools&#xa;━━━━━━━━━&#xa;set_role_rates&#xa;compute_module/phase_cost&#xa;compute_total · margin&#xa;currency_conversion&#xa;add_optional_service&#xa;add_post_golive_support&#xa;━━━━━━━━━&#xa;Output: cost.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="160" width="220" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp7" value="P7 · VALIDATION&#xa;wbs_validator · 10 tools&#xa;━━━━━━━━━&#xa;validate_fr_coverage&#xa;validate_phase_coverage&#xa;validate_module_completeness&#xa;validate_effort_distribution&#xa;validate_qc_ratio&#xa;validate_timeline_feasibility&#xa;validate_cost_vs_budget&#xa;validate_team_capacity&#xa;validate_domain_mandatory&#xa;generate_validation_report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="160" width="220" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp7-loop" value="❌ FAIL&#xa;route back&#xa;(max 3 retries)&#xa;then escalate" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1720" y="240" width="100" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp-hitl" value="🔔 HITL&#xa;Show summary&#xa;Approve render" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="240" width="100" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp8" value="P8 · TEMPLATE FILL&#xa;template_filler · 12 tools&#xa;━━━━━━━━━━&#xa;load_wbs_template&#xa;set_project_metadata&#xa;clear_placeholder_rows&#xa;add_phase_l1/l2/l3/l4_row&#xa;set_master_data&#xa;fill_delivery_plan_modules&#xa;fill_delivery_plan_resources&#xa;verify_template_integrity&#xa;━━━━━━━━━━&#xa;⚠ Preserve formulas (data_only=False)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1960" y="160" width="240" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="wp9" value="P9 · FINALIZE&#xa;finalizer · 5 tools&#xa;━━━━━━━━━&#xa;generate_summary_report&#xa;request_user_approval&#xa;apply_user_revisions ★&#xa;save_to_output_dir&#xa;upload_to_s3 (optional)&#xa;━━━━━━━━━&#xa;★ Atomic patches only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="2220" y="160" width="220" height="240" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="wp-deliv" value="✅ DELIVERABLE&#xa;OUTPUT_DIR/{project}/WBS/{name}_WBS_v0_1_0.xlsx&#xa;━━━━━━━━━━━&#xa;Sheet 1. Effort  (auto-VLOOKUP from Sheet 2)&#xa;Sheet 2. WBS    (filled L1→L4 hierarchy, formulas intact)&#xa;Sheet 3. Delivery Plan  (sprints + resource allocation)&#xa;Sheet 4. Master Data    (PM/BA/QC %, rates, currency)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="450" width="600" height="180" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="domain-inject" value="DOMAIN RULES (config/domain_rules.yaml — 26 industries)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;banking · fintech · insurance · healthcare · government · defense · ecommerce · retail · logistics · transportation&#xa;telecom · manufacturing · energy · agriculture · education · media · gaming · fnb · real_estate · legal_tech&#xa;hr_tech · ai_ml_platform · blockchain · ngo · research · standard&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Each: be_multiplier · qc_pct · ba_pct · uat_weeks · buffer_pct · mandatory_tasks · default_compliance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="450" width="900" height="180" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="benchmark-inject" value="BENCHMARKS (effort_benchmarks.json — 12 real BnK files)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Median MD: API 3 · DB 5.5 · CRUD list 16 · CRUD form 25 · Search 18&#xa;Workflow 4 · Notification 9 · Report 12 · Integration 13&#xa;AI: collect 11 · prep 17 · train 19 · inference 7 · LLM tune 10&#xa;SIT 7 (small)/105 (insurance) · UAT 6 · Deploy/env 6.6 · Hypercare 11&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Project envelope: PoC 20-50 · Lending 130-200 · AI/CV 200-350&#xa;IoT 150-250 · Insurance 1500-2600 · AI platform 3000+" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="450" width="820" height="180" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="wpe1" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp1" target="wp2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="wpe2" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp2" target="wp3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="wpe3" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp3" target="wp4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="wpe4" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp4" target="wp5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="wpe5" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp5" target="wp6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="wpe6" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp6" target="wp7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="wpe7" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp7" target="wp7-loop" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="wpe8" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp7-loop" target="wp-hitl" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="wpe9" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp-hitl" target="wp8" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="wpe10" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="wp8" target="wp9" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 3: STATE INHERITANCE + DATA FLOW                            -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <diagram name="3. State &amp; Data Flow" id="page-state-flow">
+    <mxGraphModel dx="2400" dy="1600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="p3-title" value="State Inheritance + Workspace File Flow" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2120" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="p3-state-title" value="① STATE INHERITANCE (Paper2Any pattern · MainState → 5 specialized states)" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1000" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-main" value="MainState (TypedDict)&#xa;━━━━━━━━━━━━━━━&#xa;session_id, tenant_id&#xa;project_context: ProjectContext&#xa;output_dir (user-controlled)&#xa;workspace_dir&#xa;messages: Annotated[list, add_messages]&#xa;llm_config: LLMConfig (lazy)&#xa;temp_data: dict" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="120" width="320" height="180" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-req" value="RequirementState(MainState)&#xa;━━━━━━━━━━━&#xa;raw_files: list[FileRef]&#xa;business_context: str&#xa;stakeholders: list[Stakeholder]&#xa;raw_frs: list[RawFR]&#xa;raw_nfrs: list[RawNFR]&#xa;constraints: Constraints&#xa;integrations: list[Integration]&#xa;domain: str  industry: str&#xa;clarifications: list[QnA]&#xa;analysis_complete: bool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="350" width="320" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-sol" value="SolutionState(MainState)&#xa;━━━━━━━━━━━&#xa;requirement_ref: str&#xa;architecture_type: str&#xa;tech_stack: dict[layer, techs]&#xa;deployment: Deployment&#xa;integrations_design: list&#xa;modules: list[ModuleSpec]&#xa;security_arch: SecurityArch&#xa;diagrams: list[DiagramRef]&#xa;chat_iterations: int  ← feedback loop count&#xa;solution_approved: bool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="350" width="320" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-brd" value="BRDState(MainState)&#xa;━━━━━━━━━━━&#xa;requirement_ref, solution_ref&#xa;brd_doc: BRDDocument&#xa;issues, revision_count&#xa;rendered_path" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="720" y="350" width="320" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-wbs" value="WBSState(MainState)&#xa;━━━━━━━━━━━&#xa;requirement_ref, solution_ref&#xa;wbs_doc, modules&#xa;effort_model, timeline, cost&#xa;domain_profile&#xa;revision_count" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="350" width="320" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-prop" value="ProposalState(MainState)&#xa;━━━━━━━━━━━&#xa;requirement_ref, solution_ref&#xa;wbs_ref (cost.json)&#xa;diagrams (REUSED from solution)&#xa;slides, case_studies, pricing_tiers&#xa;template_path" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="350" width="320" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="state-edge1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=0;strokeColor=#666;strokeWidth=2;" edge="1" source="state-main" target="state-req" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="state-edge2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.25;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=0;strokeColor=#666;strokeWidth=2;" edge="1" source="state-main" target="state-sol" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="state-edge3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=0;strokeColor=#666;strokeWidth=2;" edge="1" source="state-main" target="state-brd" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="state-edge4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.75;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=0;strokeColor=#666;strokeWidth=2;" edge="1" source="state-main" target="state-wbs" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="state-edge5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=1;entryX=0.5;entryY=0;endArrow=block;endFill=0;strokeColor=#666;strokeWidth=2;" edge="1" source="state-main" target="state-prop" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Workspace file tree -->
+        <mxCell id="p3-fs-title" value="② WORKSPACE FILE TREE (one per session, ephemeral 24h TTL)" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="580" width="1000" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="fs-tree" value="workspace/{session_id}/&#xa;├── AGENTS.md                       ← persistent memory&#xa;├── chat_history.json               ← all user/agent exchanges (incl. solution refinement)&#xa;│&#xa;├── PRE-PROCESSING outputs (consumed by all 3 workflows):&#xa;│   ├── raw_features.md             ← extracted text from input files&#xa;│   ├── requirement_analysis.json   ← Requirement Agent output&#xa;│   ├── solution.json               ← Solution Agent output (post-feedback)&#xa;│   └── diagrams/&#xa;│       ├── system_context.drawio   ← drawn via MCP drawio&#xa;│       ├── component.drawio&#xa;│       ├── sequence.drawio&#xa;│       └── deployment.drawio&#xa;│&#xa;├── BRD WORKFLOW outputs:&#xa;│   ├── brd_state.json              ← BRD doc AST (Pydantic)&#xa;│   └── issues.json&#xa;│&#xa;├── WBS WORKFLOW outputs:&#xa;│   ├── modules.json                ← P1 module decomposition&#xa;│   ├── wbs_tasks.json              ← P2-P3 tasks + effort&#xa;│   ├── wbs_phases.json             ← P4 phases&#xa;│   ├── timeline.json               ← P5 sprints + calendar&#xa;│   ├── cost.json                   ← P6 cost breakdown&#xa;│   ├── effort_model.json           ← active multipliers&#xa;│   ├── validation_report.json     ← P7 issues&#xa;│   └── wbs_state.json              ← WBS doc AST&#xa;│&#xa;└── PROPOSAL WORKFLOW outputs:&#xa;    ├── proposal_state.json&#xa;    └── outputs/                    ← intermediate renders" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontSize=11;align=left;spacingLeft=14;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="1060" height="600" as="geometry"/>
+        </mxCell>
+
+        <!-- Output folder structure -->
+        <mxCell id="out-tree" value="OUTPUT_DIR/  (user-controlled)&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;└── {project_name}/&#xa;    ├── BRD/&#xa;    │   └── {project_name}_BRD_v0_1_0.docx&#xa;    ├── WBS/&#xa;    │   └── {project_name}_WBS_v0_1_0.xlsx&#xa;    ├── Proposal/&#xa;    │   └── {project_name}_Proposal_v0_1_0.pptx&#xa;    └── diagrams/&#xa;        ├── system_context.png&#xa;        ├── system_context.svg&#xa;        ├── component.png&#xa;        ├── deployment.png&#xa;        └── *.drawio (editable source)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=14;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="620" width="500" height="320" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cross-wf" value="🔗 SEQUENTIAL workflow execution&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;1. POST /sessions/{id}/files       (upload)&#xa;2. POST /sessions/{id}/analyze     (Requirement → Solution)&#xa;   → Solution Agent draws diagrams,&#xa;     iterates with user via /chat (SSE)&#xa;3. User: &quot;OK approve&quot; on /chat&#xa;4. POST /sessions/{id}/run {workflow:&quot;brd&quot;}&#xa;   → reads requirement+solution&#xa;5. POST /sessions/{id}/run {workflow:&quot;wbs&quot;}&#xa;   → reads requirement+solution+brd (FRs)&#xa;6. POST /sessions/{id}/run {workflow:&quot;proposal&quot;}&#xa;   → reads everything+diagrams (reuses)&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;✓ User can skip workflows (e.g. only WBS)&#xa;✓ Workflows can re-run independently" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="620" width="520" height="320" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="folder-control" value="🔧 Folder control — 3 layers (priority)&#xa;━━━━━━━━━━━━━━━━━━━━━&#xa;1. API runtime (per-session):&#xa;   POST /sessions/{id}/output-dir { output_dir: &quot;/my/path&quot; }&#xa;2. CLI flag:  python main.py --output /my/path&#xa;3. Env var:   OUTPUT_DIR=/my/path  (default)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="960" width="1040" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="p3-note" value="💡 Why file-based state? — (1) Pre-processing outputs reused by ALL 3 workflows without re-running. (2) Re-render = re-read JSON (no LLM call). (3) Audit trail per phase. (4) HITL edits = JSON patches, no regeneration. (5) Subprocess workers read JSON via path arg (no pickle). (6) Easy checkpoint/resume." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;fontSize=11;align=left;spacingLeft=14;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1100" width="1040" height="80" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 4 (NEW): PRE-PROCESSING DETAIL — Requirement + Solution     -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <diagram name="4. Pre-processing Flow (NEW)" id="page-preprocess">
+    <mxGraphModel dx="2400" dy="1600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1500" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="p4-title" value="Pre-processing Flow — Requirement Agent + Solution Proposal Agent (chat feedback loop with MCP drawio)" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2320" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p4-sub" value="The 2 NEW pre-processing agents that run BEFORE BRD/WBS/Proposal workflows. Solution Agent iterates with user via chat, drawing diagrams via MCP drawio." style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="2320" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 1: Input -->
+        <mxCell id="step1-title" value="STEP 1 — Input phase" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=14;fontStyle=1;align=left;verticalAlign=middle;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="800" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="user1" value="USER&#xa;━━━━━&#xa;Upload requirement files&#xa;via Web UI / API:&#xa;.pdf .docx .md .pptx .xlsx&#xa;+ initial chat msg" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="200" height="140" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="upload-arrow" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="user1" target="api-step1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="api-step1" value="API&#xa;━━━━━&#xa;POST /sessions/{id}/files&#xa;→ saves to /workspace/&#xa;{session_id}/input/&#xa;&#xa;POST /sessions/{id}/analyze&#xa;→ triggers pre-processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="280" y="140" width="240" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 2: Requirement Agent -->
+        <mxCell id="step2-title" value="STEP 2 — Requirement Agent extracts &amp; analyzes" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=14;fontStyle=1;align=left;verticalAlign=middle;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="320" width="800" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="req-detail" value="REQUIREMENT AGENT&#xa;Model: claude-sonnet-4-6 · Temperature: 0.0&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;System prompt (excerpt):&#xa;&quot;You read raw requirement files and extract structured information. Be exhaustive.&#xa;If critical info is missing (no domain, no team size, no deadline), ASK the user — max 5 questions, batch them.&quot;&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;TOOLS (15):&#xa;• read_pdf · read_docx · read_pptx · read_xlsx · read_md · read_image (vision)&#xa;• extract_business_context()       → background, objectives, problem statement&#xa;• extract_stakeholders()           → list of {name, role, organization}&#xa;• extract_raw_frs()                → list of FR-like statements (not yet structured)&#xa;• extract_raw_nfrs()               → performance/security/quality (with units)&#xa;• extract_constraints()            → budget, timeline, tech stack constraints, compliance&#xa;• extract_integrations()           → existing systems, APIs, data sources&#xa;• identify_domain()                → maps to one of 26 domain profiles&#xa;• ask_clarifying_questions()       → HITL: returns Q list to user, awaits answers&#xa;• save_requirement_analysis()      → final structured JSON output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="1100" height="320" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="req-output" value="OUTPUT: requirement_analysis.json&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;{&#xa;  &quot;business_context&quot;: &quot;...&quot;,&#xa;  &quot;objectives&quot;: [...],&#xa;  &quot;stakeholders&quot;: [...],&#xa;  &quot;raw_frs&quot;: [&#xa;    {id: &quot;RAW-1&quot;, title: ..., desc: ...}&#xa;  ],&#xa;  &quot;raw_nfrs&quot;: {...},&#xa;  &quot;constraints&quot;: {&#xa;    budget, timeline,&#xa;    tech_required, compliance&#xa;  },&#xa;  &quot;integrations&quot;: [...],&#xa;  &quot;domain&quot;: &quot;banking&quot;,&#xa;  &quot;industry&quot;: &quot;retail banking&quot;,&#xa;  &quot;clarifications&quot;: [&#xa;    {q: ..., a: ...}&#xa;  ]&#xa;}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontSize=10;align=left;spacingLeft=14;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="360" width="380" height="320" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="req-hitl" value="🔔 HITL — Clarifying Questions&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;If Requirement Agent finds gaps:&#xa;1. Domain not clear → &quot;Khách hàng thuộc ngành gì?&quot;&#xa;2. Team size missing → &quot;Team composition? BE/FE/QC?&quot;&#xa;3. Deadline unclear → &quot;Thời gian delivery?&quot;&#xa;4. Compliance unclear → &quot;Có yêu cầu PCI-DSS, HIPAA?&quot;&#xa;5. Deploy env unclear → &quot;Cloud / on-prem / hybrid?&quot;&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;User answers via /chat (SSE)&#xa;Agent updates requirement_analysis.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="360" width="600" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- Step 3: Solution Agent -->
+        <mxCell id="step3-title" value="STEP 3 — Solution Proposal Agent (with chat feedback loop)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=14;fontStyle=1;align=left;verticalAlign=middle;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="710" width="800" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sol-detail" value="SOLUTION PROPOSAL AGENT&#xa;Model: claude-sonnet-4-6 · Temperature: 0.3&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;System prompt (excerpt):&#xa;&quot;You propose technical solutions for the BnK consulting firm. Always show 2-3 alternatives with trade-offs.&#xa;Draw diagrams with MCP drawio. After each proposal, present to user, iterate based on feedback.&#xa;Stop when user says &apos;OK approve&apos;.&quot;&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;TOOLS (20):&#xa;Solution proposal:&#xa;• propose_architecture_type()      → mono / micro / serverless / hybrid (+ rationale)&#xa;• propose_tech_stack()             → BE/FE/DB/cache/queue/search/AI/infra (per layer)&#xa;• propose_deployment()             → cloud/on-prem/hybrid · K8s/VM/serverless · sizing · HA · DR&#xa;• define_integration_pattern()     → API gateway / ESB / event-driven&#xa;• design_security_architecture()   → auth/encryption/secrets/audit (uses domain rules)&#xa;• decompose_into_modules()         → high-level module list with responsibilities&#xa;• evaluate_alternatives()          → presents 2-3 options + recommends&#xa;Diagram drawing (MCP):&#xa;• mcp_drawio_create_new_diagram(xml)    → new diagram (system context)&#xa;• mcp_drawio_edit_diagram(operations[]) → add/update/delete cells&#xa;• mcp_drawio_get_diagram()              → fetch current state (incl. user manual edits)&#xa;• mcp_drawio_export_diagram(path)       → save .png / .svg / .drawio&#xa;Feedback loop:&#xa;• ask_user_feedback()              → presents diagram + asks for refinements&#xa;• apply_user_revision()            → atomic patch to solution.json&#xa;• detect_approval()                → looks for &quot;OK&quot;, &quot;approve&quot;, &quot;đồng ý&quot;, &quot;final&quot;&#xa;• save_solution()                  → final structured JSON output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=14;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="750" width="1100" height="450" as="geometry"/>
+        </mxCell>
+
+        <!-- Chat feedback loop -->
+        <mxCell id="chat-detail" value="💬 CHAT FEEDBACK LOOP&#xa;━━━━━━━━━━━━━━━━━━━━━&#xa;Iteration 1:&#xa;  Agent: &quot;Tôi đề xuất microservices + K8s + PostgreSQL + Redis...&quot;&#xa;          [creates system_context.drawio via MCP]&#xa;          → user sees diagram in Web UI iframe&#xa;  User:  &quot;Đổi PostgreSQL sang MongoDB&quot;&#xa;&#xa;Iteration 2:&#xa;  Agent: [edit_diagram: replace PostgreSQL node with MongoDB,&#xa;          update solution.json: tech_stack.db = &quot;MongoDB&quot;]&#xa;         &quot;Đã đổi sang MongoDB. NFR write throughput tăng 30%, nhưng&#xa;         transactions yếu hơn — cần thêm event sourcing không?&quot;&#xa;  User:  &quot;OK thêm Kafka&quot;&#xa;&#xa;Iteration 3:&#xa;  Agent: [edit_diagram: add Kafka cluster + connectors]&#xa;         &quot;Đã thêm Kafka. Solution updated. Tiếp tục với module decomposition?&quot;&#xa;  User:  &quot;OK approve&quot;&#xa;━━━━━━━━━━━━━━━━━━━━━&#xa;[detect_approval = TRUE]&#xa;[save_solution()]&#xa;[unlock downstream workflows]&#xa;━━━━━━━━━━━━━━━━━━━━━&#xa;★ Each iteration → atomic patch (no full regeneration)&#xa;★ All exchanges saved to chat_history.json&#xa;★ User can rollback to any iteration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="750" width="1020" height="450" as="geometry"/>
+        </mxCell>
+
+        <!-- Output of pre-processing -->
+        <mxCell id="step4-title" value="STEP 4 — Approved foundation unlocks downstream workflows" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontSize=14;fontStyle=1;align=left;verticalAlign=middle;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1230" width="800" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="final-output" value="✅ APPROVED FOUNDATION&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;workspace/{session_id}/&#xa;├── requirement_analysis.json     ← from Requirement Agent&#xa;├── solution.json                 ← from Solution Agent (post-feedback)&#xa;├── chat_history.json             ← all iterations + diff trail&#xa;└── diagrams/&#xa;    ├── system_context.drawio (+ .png · .svg)&#xa;    ├── component.drawio&#xa;    ├── sequence_login.drawio&#xa;    ├── sequence_main_flow.drawio&#xa;    └── deployment.drawio" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=14;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1270" width="700" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="downstream-trigger" value="DOWNSTREAM WORKFLOWS UNLOCKED&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;User can now trigger (in any order or skip):&#xa;&#xa;POST /sessions/{id}/run {workflow: &quot;brd&quot;}&#xa;  → reads requirement + solution&#xa;  → drafts BRD sections (no redundant discovery)&#xa;&#xa;POST /sessions/{id}/run {workflow: &quot;wbs&quot;}&#xa;  → reads requirement + solution + brd (if exists)&#xa;  → starts at module decomposition (P1)&#xa;  → 9 phases · 75 tools · domain-aware effort&#xa;&#xa;POST /sessions/{id}/run {workflow: &quot;proposal&quot;}&#xa;  → reads everything + diagrams (REUSED)&#xa;  → executive summary + pricing + case studies + slides" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="780" y="1270" width="800" height="200" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="key-features" value="🎯 KEY FEATURES&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;✓ DRY — discovery + architecture done ONCE&#xa;✓ User-driven solution refinement (chat)&#xa;✓ MCP drawio integration — visual diagrams&#xa;  rendered in real-time during refinement&#xa;✓ Diagrams REUSED in Proposal workflow&#xa;✓ Atomic incremental patches (no regen)&#xa;✓ Iteration history (rollback capability)&#xa;✓ Approval gate before downstream unlock&#xa;✓ Domain rules pre-loaded (26 industries)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="1270" width="580" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges connecting steps -->
+        <mxCell id="p4-e1" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#82b366;strokeWidth=3;" edge="1" source="api-step1" target="req-detail" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4-e2" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="req-detail" target="req-output" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4-e3" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#d6b656;strokeWidth=2;dashed=1;" edge="1" source="req-output" target="req-hitl" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4-e4" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#7B68A6;strokeWidth=3;" edge="1" source="req-output" target="sol-detail" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4-e5" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#d6b656;strokeWidth=3;" edge="1" source="sol-detail" target="chat-detail" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4-e6" style="endArrow=classic;html=1;rounded=0;exitX=0.3;exitY=1;entryX=0.5;entryY=0;strokeColor=#82b366;strokeWidth=2;" edge="1" source="sol-detail" target="final-output" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4-e7" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#d79b00;strokeWidth=2;" edge="1" source="final-output" target="downstream-trigger" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 5: REQUIREMENT AGENT DETAILED FLOW (7 sub-phases)           -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <diagram name="5. Requirement Agent Flow" id="page-req-flow">
+    <mxGraphModel dx="2800" dy="1700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="1500" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="r-title" value="REQUIREMENT AGENT — Detailed Flow (7 sub-phases × 22 atomic tools)" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2720" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-sub" value="Reads raw requirement files → outputs requirement_analysis.json. HITL clarifying loop (max 5 questions, max 2 rounds) for missing critical info." style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="2720" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Input -->
+        <mxCell id="r-input" value="📥 INPUT&#xa;━━━━━━━&#xa;Files in /workspace/{session}/input/&#xa;━━━━━━━&#xa;.pdf · .docx · .md · .txt&#xa;.pptx · .xlsx · .png/.jpg&#xa;━━━━━━━&#xa;+ Initial chat message (optional)&#xa;e.g. &quot;Hệ thống bồi thường bảo hiểm cho MBAL&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="220" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- R1: Input Triage -->
+        <mxCell id="r1" value="R1 · INPUT TRIAGE&#xa;━━━━━━━━━━━&#xa;list_input_files()&#xa;  → walk /input/ recursively&#xa;classify_files()&#xa;  → group by type + relevance&#xa;prioritize_files()&#xa;  → BRD/SOW first, then specs&#xa;━━━━━━━━━━━&#xa;Heuristic priority:&#xa;1. *BRD*, *SOW*, *Statement of Work*&#xa;2. *Spec*, *Requirement*&#xa;3. *.pdf > .docx > .md > .pptx&#xa;4. .xlsx (data tables) last" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="280" y="100" width="220" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- R2: Multi-format Extraction (parallel) -->
+        <mxCell id="r2" value="R2 · MULTI-FORMAT EXTRACTION&#xa;━━━━━━━━━━━&#xa;Run in parallel (asyncio.gather):&#xa;• read_pdf(path, max_chars=200k)&#xa;     pypdf + vision fallback&#xa;• read_docx(path)&#xa;     python-docx · headings + tables&#xa;• read_pptx(path)&#xa;     python-pptx · titles + notes&#xa;• read_xlsx(path, max_rows=200)&#xa;     openpyxl · per-sheet&#xa;• read_md(path) · read_txt(path)&#xa;• read_image(path)&#xa;     vision LLM · OCR diagrams&#xa;━━━━━━━━━━━&#xa;consolidate() → raw_features.md&#xa;(Markdown with [Source: file:line])" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="100" width="240" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- R3: Structure Extraction -->
+        <mxCell id="r3" value="R3 · STRUCTURE EXTRACTION&#xa;━━━━━━━━━━━&#xa;Reads raw_features.md, calls 7 tools&#xa;sequentially (each = 1 LLM call):&#xa;━━━━━━━━━━━&#xa;extract_business_context()&#xa;  → background, problem, why now&#xa;extract_objectives()&#xa;  → SMART goals (specific, measurable)&#xa;extract_stakeholders()&#xa;  → [{name, role, organization, contact}]&#xa;extract_raw_frs()&#xa;  → [{id:RAW-1, title, description, source}]&#xa;extract_raw_nfrs()&#xa;  → {performance, security, quality, ...}&#xa;extract_constraints()&#xa;  → budget, deadline, tech_required, compliance&#xa;extract_integrations()&#xa;  → [{system, protocol, direction, complexity}]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="780" y="100" width="260" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- R4: Domain Classification -->
+        <mxCell id="r4" value="R4 · DOMAIN CLASSIFICATION&#xa;━━━━━━━━━━━&#xa;identify_domain()&#xa;  → maps to 1 of 26 profiles&#xa;  banking · fintech · insurance ·&#xa;  healthcare · government · ...&#xa;  ↓ uses LLM + keyword matching&#xa;  ↓ confidence score&#xa;━━━━━━━━━━━&#xa;lookup_domain_profile(domain)&#xa;  → loads from domain_rules.yaml&#xa;  → mandatory_tasks, multipliers,&#xa;     compliance defaults, arch_rec&#xa;━━━━━━━━━━━&#xa;detect_compliance_signals()&#xa;  → text mentions PCI-DSS, HIPAA,&#xa;     PDPA, ISO 27001, SOC 2&#xa;━━━━━━━━━━━&#xa;Auto-fills constraints.compliance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="100" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- R5: Gap Analysis -->
+        <mxCell id="r5" value="R5 · GAP ANALYSIS&#xa;━━━━━━━━━━━&#xa;check_critical_fields_present()&#xa;  → required: domain, team, deadline,&#xa;     deploy_env, budget_signal&#xa;  → soft: compliance, scale, integrations&#xa;━━━━━━━━━━━&#xa;If gaps → prepare_clarifying_questions()&#xa;  prioritize: critical &gt; soft&#xa;  generate Vietnamese-friendly Qs&#xa;  batch: max 5, single round&#xa;━━━━━━━━━━━&#xa;Skip R6/R7 if no gaps → jump to R8" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="100" width="240" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- HITL Gate -->
+        <mxCell id="r-hitl-gate" value="🔔 HITL GATE&#xa;━━━━━━━━━━&#xa;Has gaps?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="160" width="120" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- R6: HITL Clarification -->
+        <mxCell id="r6" value="R6 · HITL CLARIFICATION (chat-based)&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;ask_clarifying_questions(qs[])&#xa;  → emit SSE event &apos;hitl&apos; with Q list&#xa;  → wait for user response (timeout 5min)&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;Vietnamese-aware Q examples:&#xa;&quot;Để analyze chính xác, cho tôi biết:&#xa;1. Khách hàng thuộc ngành gì?&#xa;   (banking / insurance / e-commerce / ...)&#xa;2. Team composition?&#xa;   (ví dụ: 3 BE + 2 FE + 1 QC + 1 BA + 1 PM)&#xa;3. Target delivery date?&#xa;4. Deploy env? (cloud / on-prem / hybrid)&#xa;5. Compliance bắt buộc? (PCI-DSS / HIPAA / ...)&quot;&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;User answers via /chat (SSE)&#xa;parse_clarification_response()&#xa;  → structured update to extracted state&#xa;append_to_clarifications[]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1720" y="100" width="380" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- R7: Re-extraction (after answers) -->
+        <mxCell id="r7" value="R7 · RE-EXTRACTION&#xa;━━━━━━━━━━━&#xa;Re-run R3-R4 tools that depended&#xa;on missing info:&#xa;━━━━━━━━━━━&#xa;If domain answered →&#xa;  re-call lookup_domain_profile()&#xa;If team size answered →&#xa;  update constraints.team&#xa;If deadline answered →&#xa;  update constraints.timeline&#xa;━━━━━━━━━━━&#xa;Re-validate: still gaps?&#xa;  → loop back to R5 (max 2 rounds)&#xa;  → after 2 rounds: escalate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="2120" y="100" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- R8: Validation & Save -->
+        <mxCell id="r8" value="R8 · VALIDATION &amp; SAVE&#xa;━━━━━━━━━━━&#xa;validate_completeness()&#xa;  ✓ business_context not empty&#xa;  ✓ at least 1 stakeholder&#xa;  ✓ at least 3 raw_frs&#xa;  ✓ NFRs have categories&#xa;  ✓ domain set&#xa;  ✓ critical constraints filled&#xa;━━━━━━━━━━━&#xa;save_requirement_analysis()&#xa;  → workspace/requirement_analysis.json&#xa;  → Pydantic-validated&#xa;━━━━━━━━━━━&#xa;emit_completion_event()&#xa;  → SSE &apos;done&apos; event&#xa;  → triggers Solution Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="2380" y="100" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- Output -->
+        <mxCell id="r-output" value="✅ OUTPUT: workspace/{session}/requirement_analysis.json&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;{&#xa;  &quot;business_context&quot;: &quot;MBAL hệ thống bảo hiểm hiện tại xử lý hồ sơ thủ công, cần tự động hoá việc phân loại + kiểm tra tính đầy đủ chứng từ.&quot;,&#xa;  &quot;objectives&quot;: [&quot;Tự động phân loại 100% bộ chứng từ&quot;, &quot;Giảm thời gian xử lý từ 30p → 5p&quot;, &quot;Tăng độ chính xác bóc tách ≥ 95%&quot;],&#xa;  &quot;stakeholders&quot;: [{&quot;name&quot;: &quot;Nguyễn A&quot;, &quot;role&quot;: &quot;Product Owner&quot;, &quot;org&quot;: &quot;MBAL&quot;}, ...],&#xa;  &quot;raw_frs&quot;: [{&quot;id&quot;: &quot;RAW-1&quot;, &quot;title&quot;: &quot;Tích hợp IDP với DP&quot;, &quot;description&quot;: &quot;...&quot;, &quot;source&quot;: &quot;BRD section 4.1&quot;}, ...],&#xa;  &quot;raw_nfrs&quot;: {&quot;performance&quot;: [...], &quot;security&quot;: [...], &quot;quality&quot;: [...]},&#xa;  &quot;constraints&quot;: {&quot;budget&quot;: &quot;flexible&quot;, &quot;timeline&quot;: &quot;6 months&quot;, &quot;team&quot;: {...}, &quot;tech_required&quot;: [&quot;Python&quot;, &quot;PostgreSQL&quot;], &quot;compliance&quot;: [&quot;ISO 27001&quot;]},&#xa;  &quot;integrations&quot;: [{&quot;system&quot;: &quot;Digital Platform (DP)&quot;, &quot;protocol&quot;: &quot;REST&quot;, &quot;direction&quot;: &quot;bidirectional&quot;, &quot;complexity&quot;: &quot;medium&quot;}],&#xa;  &quot;domain&quot;: &quot;insurance&quot;, &quot;industry&quot;: &quot;life insurance&quot;, &quot;country&quot;: &quot;VN&quot;,&#xa;  &quot;clarifications&quot;: [{&quot;question&quot;: &quot;Team composition?&quot;, &quot;answer&quot;: &quot;3 BE + 2 FE + 1 QC + 1 BA + 1 PM&quot;}],&#xa;  &quot;analysis_complete&quot;: true&#xa;}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontSize=10;align=left;spacingLeft=12;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="40" y="450" width="2720" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- Tools used summary -->
+        <mxCell id="r-tools" value="🔧 ALL 22 TOOLS USED IN REQUIREMENT AGENT&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;FILE READING (8): list_input_files · classify_files · prioritize_files · read_pdf · read_docx · read_pptx · read_xlsx · read_md · read_image · consolidate&#xa;EXTRACTION (7):  extract_business_context · extract_objectives · extract_stakeholders · extract_raw_frs · extract_raw_nfrs · extract_constraints · extract_integrations&#xa;DOMAIN (3):      identify_domain · lookup_domain_profile · detect_compliance_signals&#xa;GAP ANALYSIS (2): check_critical_fields_present · prepare_clarifying_questions&#xa;HITL (2):        ask_clarifying_questions · parse_clarification_response&#xa;VALIDATION (2):  validate_completeness · save_requirement_analysis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=12;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="750" width="2720" height="170" as="geometry"/>
+        </mxCell>
+
+        <!-- Failure modes / edge cases -->
+        <mxCell id="r-edges" value="⚠️ EDGE CASES &amp; FAILURE MODES&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;❌ File too large       → use streaming (read_pdf max_chars=200k); reject &gt; 50MB; suggest user upload key sections only&#xa;❌ File corrupted       → log + skip + warn user; continue with other files; if all corrupted → fail fast&#xa;❌ Vision LLM timeout    → fallback to text-only OCR (tesseract); embed image path; flag for manual review&#xa;❌ User no response in 5min → save partial state; emit timeout event; allow resume via session_id&#xa;❌ User refuses to clarify → use default profile (&apos;standard&apos;); flag low_confidence=true&#xa;❌ Conflicting info between files → flag CONFLICT in clarifications[]; ask user to resolve&#xa;❌ Domain ambiguous (banking vs fintech) → ask explicitly in clarifying_questions; default to broader&#xa;❌ Loop ≥ 2 rounds without resolution → escalate to engineer (notify ops); save analysis_complete=false" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=12;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="940" width="2720" height="200" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="r-e1" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="r-input" target="r1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r-e2" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="r1" target="r2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r-e3" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="r2" target="r3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r-e4" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="r3" target="r4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r-e5" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="r4" target="r5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r-e6" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="r5" target="r-hitl-gate" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r-e7-yes" value="YES" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;" edge="1" source="r-hitl-gate" target="r6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r-e8" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="r6" target="r7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r-e9" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="r7" target="r8" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="r-e7-no" value="NO" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=1;strokeColor=#82b366;strokeWidth=2;fontStyle=1;dashed=1;" edge="1" source="r-hitl-gate" target="r8" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1640" y="400"/>
+              <mxPoint x="2500" y="400"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r-loop" value="loop max 2 rounds" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=1;strokeColor=#b85450;strokeWidth=2;fontStyle=2;" edge="1" source="r7" target="r5" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2240" y="420"/>
+              <mxPoint x="1440" y="420"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r-e-out" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#82b366;strokeWidth=3;" edge="1" source="r8" target="r-output" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 6: SOLUTION PROPOSAL AGENT DETAILED FLOW (11 sub-phases)    -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <diagram name="6. Solution Agent Flow" id="page-sol-flow">
+    <mxGraphModel dx="2800" dy="1900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="1900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="s-title" value="SOLUTION PROPOSAL AGENT — Detailed Flow (11 sub-phases × 35 atomic tools, with chat feedback loop + MCP drawio)" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2720" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="s-sub" value="Reads requirement_analysis.json → designs solution → draws diagrams via MCP drawio → iterates with user via chat until approved → saves solution.json + diagrams/" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="2720" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Top row: Initial proposal phases (S1-S8) -->
+        <mxCell id="s-row1-title" value="── PART A: INITIAL PROPOSAL (deterministic, single-pass) ──" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#7B68A6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="2720" height="22" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s1" value="S1 · FOUNDATION LOAD&#xa;━━━━━━━━━━━&#xa;load_requirement_analysis()&#xa;  → reads workspace/&#xa;     requirement_analysis.json&#xa;━━━━━━━━━━━&#xa;load_domain_profile(domain)&#xa;  → reads config/domain_rules.yaml&#xa;  → applies multipliers, mandatory&#xa;     compliance, recommended archs&#xa;━━━━━━━━━━━&#xa;load_team_seniority()&#xa;detect_must_use_constraints()&#xa;  → tech_required[], tech_excluded[]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="135" width="220" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s2" value="S2 · ARCHITECTURE TYPE&#xa;━━━━━━━━━━━&#xa;evaluate_architecture_options()&#xa;  → mono · modular_mono · micro&#xa;  · serverless · hybrid · edge-first&#xa;━━━━━━━━━━━&#xa;Domain rules filter:&#xa;  banking → exclude serverless&#xa;  defense → exclude cloud&#xa;━━━━━━━━━━━&#xa;propose_architecture_type(&#xa;  type, rationale,&#xa;  alternatives_considered[]&#xa;)&#xa;Always present 2-3 options&#xa;with trade-off analysis" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="280" y="135" width="220" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s3" value="S3 · TECH STACK PER LAYER&#xa;━━━━━━━━━━━&#xa;propose_be_stack()    → Spring · FastAPI · Node&#xa;propose_fe_stack()    → React · Vue · Angular · Mobile&#xa;propose_db_stack()    → PG · Mongo · Mysql · Cassandra&#xa;propose_cache()       → Redis · Memcached&#xa;propose_queue()       → Kafka · RabbitMQ · SQS&#xa;propose_search()      → Elasticsearch · OpenSearch&#xa;propose_ai_stack()    → Triton · BentoML · vLLM (if AI)&#xa;propose_infra_stack() → K8s · ECS · Nomad · serverless&#xa;━━━━━━━━━━━&#xa;validate_against_must_use()&#xa;  → ensures tech_required[] selected&#xa;  → flags conflicts with must_not_use" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="135" width="280" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s4" value="S4 · DEPLOYMENT&#xa;━━━━━━━━━━━&#xa;select_deployment_env()&#xa;  → cloud / on-prem / hybrid&#xa;  Domain default: banking → on-prem&#xa;  E-com → cloud&#xa;━━━━━━━━━━━&#xa;propose_infrastructure()&#xa;  K8s cluster size&#xa;  DB primary + replicas&#xa;  Cache cluster&#xa;━━━━━━━━━━━&#xa;propose_sizing(traffic, dau)&#xa;propose_ha_strategy(rto, rpo)&#xa;propose_dr_strategy()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="820" y="135" width="220" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s5" value="S5 · INTEGRATION DESIGN&#xa;━━━━━━━━━━━&#xa;For each external system in&#xa;requirement_analysis.integrations:&#xa;━━━━━━━━━━━&#xa;define_integration_pattern()&#xa;  → API gateway (sync REST/gRPC)&#xa;  → ESB (legacy)&#xa;  → Event bus (async, Kafka)&#xa;  → Direct DB (legacy migration)&#xa;━━━━━━━━━━━&#xa;define_api_gateway_strategy()&#xa;  Kong / APISIX / AWS API GW&#xa;define_event_bus()&#xa;  if ≥ 3 async integrations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="135" width="240" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s6" value="S6 · SECURITY ARCHITECTURE&#xa;━━━━━━━━━━━&#xa;design_authentication()&#xa;  OIDC · SAML · JWT · MFA&#xa;design_authorization()&#xa;  RBAC · ABAC · policy engine&#xa;design_encryption()&#xa;  at-rest AES-256&#xa;  in-transit TLS 1.3&#xa;design_secrets_mgmt()&#xa;  Vault · AWS Secrets Manager&#xa;design_audit_logging()&#xa;  ELK · Splunk · OpenTelemetry&#xa;━━━━━━━━━━━&#xa;inject_domain_security()&#xa;  banking → MFA mandatory, mTLS,&#xa;     Vault, SIEM, audit trail" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="135" width="240" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s7" value="S7 · MODULE DECOMP&#xa;━━━━━━━━━━━&#xa;group_frs_into_modules()&#xa;  → cluster raw_frs by domain&#xa;     entity (user, claim, ...)&#xa;define_module_responsibilities()&#xa;  → owns_data, exposes_api,&#xa;     consumes_events&#xa;define_module_dependencies()&#xa;  → hard / soft / optional&#xa;identify_shared_components()&#xa;  → auth-lib, logging, common-types&#xa;━━━━━━━━━━━&#xa;Output: list[ModuleSpec]&#xa;(used by WBS workflow later)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1580" y="135" width="240" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s8" value="S8 · DIAGRAM GENERATION (MCP drawio)&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;mcp__drawio__start_session()&#xa;  → opens browser preview&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;mcp__drawio__create_new_diagram(xml)&#xa;  Diagram 1: System Context&#xa;     external systems + this system&#xa;  Diagram 2: Component (modules)&#xa;     L2 modules + dependencies&#xa;  Diagram 3-N: Sequence per key flow&#xa;     (top 3 user journeys)&#xa;  Diagram N+1: Deployment&#xa;     K8s pods + DB + cache topology&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;mcp__drawio__export_diagram(.png + .svg)&#xa;  → workspace/diagrams/&#xa;━━━━━━━━━━━━━━━━━━━━&#xa;Stream PNG previews to UI via SSE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="135" width="320" height="280" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s9" value="S9 · INITIAL PRESENTATION&#xa;━━━━━━━━━━━━━&#xa;generate_summary_text()&#xa;  Vietnamese-aware &#xa;  Format: bullets + diagrams refs&#xa;━━━━━━━━━━━━━&#xa;present_to_user()&#xa;  → emit SSE events:&#xa;     • token (summary text)&#xa;     • diagram (4 PNG paths)&#xa;     • prompt (&quot;Bạn review nhé&quot;)&#xa;━━━━━━━━━━━━━&#xa;Wait for user response on /chat&#xa;⏬ enter feedback loop (S10)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="2180" y="135" width="240" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- Bottom row: Chat feedback loop (S10) and approval (S11) -->
+        <mxCell id="s-row2-title" value="── PART B: CHAT FEEDBACK LOOP (iterative, until approved — max 15 iterations) ──" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#7B68A6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="450" width="2720" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- S10 main loop body -->
+        <mxCell id="s10-bg" value="S10 · CHAT FEEDBACK LOOP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="40" y="485" width="1700" height="540" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s10-1" value="S10.1 · RECEIVE MESSAGE&#xa;━━━━━━━━━━&#xa;User sends message via /chat (SSE)&#xa;e.g. &quot;Đổi PostgreSQL sang MongoDB&quot;&#xa;     &quot;Thêm Redis cache&quot;&#xa;     &quot;Bỏ message queue&quot;&#xa;     &quot;OK approve&quot;&#xa;     &quot;Quay lại bước trước&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="525" width="260" height="160" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="s10-2" value="S10.2 · INTENT CLASSIFICATION&#xa;━━━━━━━━━━&#xa;classify_intent(message) → 5 types:&#xa;━━━━━━━━━━&#xa;• REFINE (most common)&#xa;   → identify_change_target&#xa;• QUESTION&#xa;   → no state change, explain&#xa;• ROLLBACK&#xa;   → restore previous snapshot&#xa;• APPROVE&#xa;   → break loop, save&#xa;• REJECT_RESTART&#xa;   → reset, redo S2-S8&#xa;━━━━━━━━━━&#xa;Hybrid: keyword + LLM classifier" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="340" y="525" width="280" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- S10.3 REFINE branch -->
+        <mxCell id="s10-3" value="S10.3 · REFINE BRANCH (most common)&#xa;━━━━━━━━━━━━&#xa;identify_change_target(message)&#xa;  → which field in solution.json?&#xa;     tech_stack.db / deployment.env / ...&#xa;  → which diagram cells affected?&#xa;━━━━━━━━━━━━&#xa;save_diff_snapshot(current_state)&#xa;  → for rollback support&#xa;━━━━━━━━━━━━&#xa;apply_atomic_patch(field, new_value)&#xa;  → solution.json (only that field)&#xa;━━━━━━━━━━━━&#xa;mcp__drawio__get_diagram()&#xa;  → fetch latest (incl. user manual edits)&#xa;mcp__drawio__edit_diagram(operations)&#xa;  → update/add/delete cells&#xa;mcp__drawio__export_diagram(.png)&#xa;  → re-export updated PNG&#xa;━━━━━━━━━━━━&#xa;re_validate_against_constraints()&#xa;  ✓ tech_required[] still satisfied?&#xa;  ✓ no banned techs introduced?&#xa;  ✓ domain mandatory architecture?" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="640" y="525" width="320" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- S10.4 stream response -->
+        <mxCell id="s10-4" value="S10.4 · STREAM RESPONSE&#xa;━━━━━━━━━━━&#xa;Emit SSE events:&#xa;━━━━━━━━━━━&#xa;event: tool_call&#xa;  data: {tool:&apos;edit_diagram&apos;, args:...}&#xa;━━━━━━━━━━━&#xa;event: diagram&#xa;  data: {path:&apos;...png&apos;, version:N}&#xa;━━━━━━━━━━━&#xa;event: token&#xa;  data: {content:&quot;Đã đổi sang MongoDB.&#xa;     Lưu ý: write throughput +30%,&#xa;     transactions yếu hơn — có cần&#xa;     thêm event sourcing không?&quot;}&#xa;━━━━━━━━━━━&#xa;Update chat_iterations += 1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="980" y="525" width="280" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- S10.5 question branch -->
+        <mxCell id="s10-5" value="S10.5 · QUESTION BRANCH&#xa;━━━━━━━━━━&#xa;Example: &quot;Tại sao chọn MongoDB?&quot;&#xa;━━━━━━━━━━&#xa;explain_decision()&#xa;  → reads solution.json+chat history&#xa;  → generates Vietnamese explanation&#xa;  → cites domain rules + benchmarks&#xa;━━━━━━━━━━&#xa;NO state change&#xa;Stream answer via SSE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="525" width="220" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- S10.6 rollback -->
+        <mxCell id="s10-6" value="S10.6 · ROLLBACK&#xa;━━━━━━━━━━&#xa;Example: &quot;Quay lại lúc trước&quot;&#xa;━━━━━━━━━━&#xa;list_diff_snapshots()&#xa;  → present iteration history&#xa;restore_snapshot(iteration_n)&#xa;  → solution.json reverted&#xa;  → mcp_drawio_create_new_diagram&#xa;     with old XML&#xa;━━━━━━━━━━&#xa;Stream confirmation + diff" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="525" width="200" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- S10 Loop back -->
+        <mxCell id="s10-loopnote" value="🔄 LOOP BACK to S10.1 (max 15 iterations · then escalate to engineer)&#xa;Each iteration: ~500-2000 tokens · expected ~3-7 iterations for typical session" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;fontSize=10;fontStyle=2;align=center;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="780" width="1660" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- S10.7 user manual drawio edit -->
+        <mxCell id="s10-7" value="S10.7 · USER MANUAL DRAWIO EDIT (advanced UX)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;User edits diagram directly in browser preview (drawio session)&#xa;Agent detects change via mcp__drawio__get_diagram() (returns latest XML)&#xa;Agent reverse-engineers user intent → updates solution.json accordingly&#xa;Agent acknowledges: &quot;Đã capture thay đổi của bạn vào solution.json&quot;&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Trigger: user click &quot;Sync edits&quot; button OR periodic (every 30s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="850" width="1660" height="160" as="geometry"/>
+        </mxCell>
+
+        <!-- S11: Approval & Save -->
+        <mxCell id="s11" value="S11 · APPROVAL &amp; SAVE&#xa;━━━━━━━━━━━━&#xa;detect_approval(message)&#xa;  Hybrid logic:&#xa;  1. Keyword fast-path:&#xa;     &quot;OK&quot;, &quot;approve&quot;, &quot;đồng ý&quot;,&#xa;     &quot;duyệt&quot;, &quot;final&quot;, &quot;OK then&quot;, &quot;LGTM&quot;&#xa;  2. LLM classifier (if ambiguous):&#xa;     class ApprovalDetection(BaseModel):&#xa;       intent: Literal[&quot;approve&quot;, &quot;refine&quot;,&#xa;          &quot;question&quot;, &quot;rollback&quot;]&#xa;       confidence: float&#xa;━━━━━━━━━━━━&#xa;If confidence ≥ 0.85 → APPROVE&#xa;Else → ASK CONFIRMATION:&#xa;  &quot;Tôi hiểu là bạn duyệt giải pháp này,&#xa;   đúng không? Reply &apos;yes&apos; để confirm.&quot;&#xa;━━━━━━━━━━━━&#xa;On confirm:&#xa;save_solution()&#xa;  → workspace/solution.json&#xa;save_chat_history()&#xa;  → workspace/chat_history.json&#xa;export_final_diagrams()&#xa;  → .png + .svg + .drawio (all 4 types)&#xa;━━━━━━━━━━━━&#xa;emit_completion_event()&#xa;  → SSE &apos;foundation_ready&apos; event&#xa;  → unlock BRD/WBS/Proposal workflows" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1780" y="485" width="380" height="540" as="geometry"/>
+        </mxCell>
+
+        <!-- Output -->
+        <mxCell id="s-output" value="📤 FINAL OUTPUT (consumed by BRD / WBS / Proposal)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;workspace/{session}/solution.json — { architecture_type, tech_stack, deployment, integrations_design, modules, security_arch, diagrams: [refs] }&#xa;workspace/{session}/diagrams/system_context.drawio + .png + .svg&#xa;workspace/{session}/diagrams/component.drawio + .png + .svg&#xa;workspace/{session}/diagrams/sequence_*.drawio + .png + .svg  (1-3 sequences)&#xa;workspace/{session}/diagrams/deployment.drawio + .png + .svg&#xa;workspace/{session}/chat_history.json — full audit trail of iterations + diffs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontSize=10;align=left;spacingLeft=12;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1050" width="2720" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- All tools summary -->
+        <mxCell id="s-tools" value="🔧 ALL 35 TOOLS USED IN SOLUTION AGENT&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;FOUNDATION (4):  load_requirement_analysis · load_domain_profile · load_team_seniority · detect_must_use_constraints&#xa;ARCHITECTURE (3): evaluate_architecture_options · propose_architecture_type · list_alternatives_with_tradeoffs&#xa;TECH STACK (9):  propose_be_stack · propose_fe_stack · propose_db_stack · propose_cache · propose_queue · propose_search · propose_ai_stack · propose_infra_stack · validate_against_must_use&#xa;DEPLOYMENT (5):  select_deployment_env · propose_infrastructure · propose_sizing · propose_ha_strategy · propose_dr_strategy&#xa;INTEGRATION (3): define_integration_pattern · define_api_gateway_strategy · define_event_bus&#xa;SECURITY (6):    design_authentication · design_authorization · design_encryption · design_secrets_mgmt · design_audit_logging · inject_domain_security&#xa;MODULES (4):     group_frs_into_modules · define_module_responsibilities · define_module_dependencies · identify_shared_components&#xa;DIAGRAM (5 MCP wrappers): mcp_drawio_start · mcp_drawio_create · mcp_drawio_edit · mcp_drawio_get · mcp_drawio_export&#xa;FEEDBACK LOOP (8): receive_message · classify_intent · identify_change_target · save_diff_snapshot · apply_atomic_patch · re_validate · explain_decision · restore_snapshot&#xa;APPROVAL (4):    detect_approval · save_solution · save_chat_history · emit_completion_event" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;fontSize=9;align=left;spacingLeft=12;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1250" width="2720" height="220" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges S1 → S9 -->
+        <mxCell id="s-e1" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s1" target="s2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e2" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s2" target="s3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e3" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s3" target="s4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e4" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s4" target="s5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e5" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s5" target="s6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e6" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s6" target="s7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e7" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s7" target="s8" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e8" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s8" target="s9" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- S9 → S10 (enter loop) -->
+        <mxCell id="s-e9" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#d6b656;strokeWidth=3;" edge="1" source="s9" target="s10-bg" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Inside S10 loop -->
+        <mxCell id="s-e10-1" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="s10-1" target="s10-2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e10-2" value="REFINE" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.4;entryX=0;entryY=0.5;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;" edge="1" source="s10-2" target="s10-3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e10-3" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="s10-3" target="s10-4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s-e10-q" value="QUESTION" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.7;entryX=0;entryY=0.3;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;" edge="1" source="s10-2" target="s10-5" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="700"/>
+              <mxPoint x="1270" y="700"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s-e10-r" value="ROLLBACK" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.85;entryX=0;entryY=0.5;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;" edge="1" source="s10-2" target="s10-6" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="730"/>
+              <mxPoint x="1510" y="730"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- S10 → S11 (approve exits loop) -->
+        <mxCell id="s-e11" value="APPROVE&#xa;(exit loop)" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.3;strokeColor=#82b366;strokeWidth=3;fontStyle=1;fontSize=10;" edge="1" source="s10-2" target="s11" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1750" y="635"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- S11 → output -->
+        <mxCell id="s-e-out" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#82b366;strokeWidth=3;" edge="1" source="s11" target="s-output" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 7: BRD WORKFLOW DETAILED FLOW (9 phases, BA-enhanced)       -->
+  <!-- ════════════════════════════════════════════════════════════════ -->
+  <diagram name="7. BRD Workflow Flow" id="page-brd-flow">
+    <mxGraphModel dx="2800" dy="2000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="2000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="b-title" value="BRD WORKFLOW — Detailed Flow (9 phases × 70 atomic tools · BA-enhanced · MCP drawio for diagrams)" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="2720" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="b-sub" value="Reads upstream foundation → drafts BRD section-by-section → DRAWS diagrams via MCP drawio (BPMN · sequence · use case · DFD · state) → exports XML→PNG → embeds in .docx · BA methodologies: SWOT, BPMN, RACI, personas, journey mapping, AS-IS/TO-BE, gap analysis, traceability matrix" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;fontColor=#555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="2720" height="36" as="geometry"/>
+        </mxCell>
+
+        <!-- Foundation banner -->
+        <mxCell id="b-foundation" value="📥 FOUNDATION (read from upstream pre-processing)&#xa;workspace/{session}/requirement_analysis.json · solution.json · diagrams/*.drawio · chat_history.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=11;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="40" y="105" width="2720" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- B1 -->
+        <mxCell id="b1" value="B1 · FOUNDATION LOAD&#xa;━━━━━━━━━━━&#xa;5 tools&#xa;━━━━━━━━━━━&#xa;load_requirement_analysis()&#xa;  → reads workspace/req...json&#xa;load_solution()&#xa;  → reads workspace/solution.json&#xa;load_brd_template_structure()&#xa;  → BnK_BRD_Template_v1.0.docx&#xa;detect_language()&#xa;  → vi/en (mirror user)&#xa;init_brd(name, code, author,&#xa;         version, language)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="180" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- B2 -->
+        <mxCell id="b2" value="B2 · EXECUTIVE &amp; STRATEGIC&#xa;━━━━━━━━━━━&#xa;6 tools  ★ BA: business case&#xa;━━━━━━━━━━━&#xa;set_executive_summary()&#xa;  → 1-page summary for sponsors&#xa;set_brd_purpose(background)&#xa;  → 1. Bối cảnh + problem statement&#xa;set_brd_objectives_smart()&#xa;  → SMART goals (Specific,&#xa;     Measurable, Achievable,&#xa;     Relevant, Time-bound)&#xa;set_brd_success_metrics()&#xa;  → KPI framework (target + actual)&#xa;set_brd_business_case()&#xa;  → ROI estimation, cost-benefit&#xa;set_brd_intended_use()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="300" y="180" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- B3 -->
+        <mxCell id="b3" value="B3 · STAKEHOLDER ANALYSIS&#xa;━━━━━━━━━━━&#xa;5 tools  ★ BA: discovery&#xa;━━━━━━━━━━━&#xa;set_brd_intended_audience()&#xa;  → audience + representative table&#xa;set_brd_stakeholder_matrix()&#xa;  → RACI matrix&#xa;     (Responsible / Accountable /&#xa;      Consulted / Informed)&#xa;  → influence × interest grid&#xa;set_brd_user_personas()&#xa;  → persona cards (goals, pain&#xa;     points, frequency, tech level)&#xa;set_brd_user_journey()&#xa;  → journey map (per persona)&#xa;set_brd_communication_plan()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="560" y="180" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- B4 -->
+        <mxCell id="b4" value="B4 · SCOPE &amp; PROCESS ANALYSIS&#xa;━━━━━━━━━━━&#xa;10 tools  ★ BA + MCP drawio&#xa;━━━━━━━━━━━&#xa;set_brd_scope_inscope()&#xa;set_brd_scope_outofscope()&#xa;set_brd_delivery_phases()&#xa;  → Phase 1, 1.5, 2 (MBAL pattern)&#xa;━━━━━━━━━━━&#xa;DIAGRAMS via MCP drawio:&#xa;mcp_drawio_create_bpmn_as_is()&#xa;  → swimlane + activities&#xa;mcp_drawio_create_bpmn_to_be()&#xa;  → automated flow&#xa;mcp_drawio_create_value_stream()&#xa;mcp_drawio_export_to_png()&#xa;  → workspace/diagrams/brd/&#xa;━━━━━━━━━━━&#xa;set_brd_gap_analysis()&#xa;  → AS-IS vs TO-BE delta table&#xa;embed_diagram_ref(brd_section,&#xa;                  png_path)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="820" y="180" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- B5 -->
+        <mxCell id="b5" value="B5 · USER NEEDS &amp; RULES&#xa;━━━━━━━━━━━&#xa;4 tools  ★ BA: elicitation&#xa;━━━━━━━━━━━&#xa;set_brd_user_needs()&#xa;  → Primary / Secondary / Tertiary&#xa;     each: name, type, description&#xa;set_brd_assumptions()&#xa;  → assumptions paired with&#xa;     dependencies (mitigation)&#xa;set_brd_business_rules()&#xa;  → BR01..BRn (categories:&#xa;     Validation, Calculation,&#xa;     Workflow, Authorization, Data)&#xa;set_brd_constraints()&#xa;  → tech, budget, regulatory,&#xa;     organizational" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="180" width="240" height="280" as="geometry"/>
+        </mxCell>
+
+        <!-- B6 (largest - the FRs + diagrams) -->
+        <mxCell id="b6" value="B6 · FUNCTIONAL REQUIREMENTS + DIAGRAMS  ★ THE CORE OF BRD&#xa;━━━━━━━━━━━━━━━━━━━━━━&#xa;9 tools, called per FR (10-30 FRs typical)  ★ BA: user stories + AC + sequences&#xa;━━━━━━━━━━━━━━━━━━━━━━&#xa;upsert_fr(fr_id, section_id, ...)&#xa;  → idempotent, section_id (UUID) for incremental patches&#xa;  → fields: id, name, priority, raised_by, short_desc,&#xa;     description (3-6 sentences), interface_notes,&#xa;     mockup_ref, data_fields[], source_req_ids[]&#xa;━━━━━━━━━━━━━━━━━━━━━━&#xa;add_user_story(fr_id, story)   format: &quot;As a&lt;persona&gt;,I want&lt;goal&gt;,so that&lt;benefit&gt;&quot;&#xa;add_use_case(fr_id, uc)        actor · trigger · main_flow · alt · exception · pre/post&#xa;add_acceptance_criteria(fr_id) BDD format: Given-When-Then · testable&#xa;link_fr_to_business_rule(fr_id, rule_id)  ★ traceability matrix&#xa;━━━━━━━━━━━━━━━━━━━━━━&#xa;DIAGRAMS via MCP drawio (per FR or grouped):&#xa;mcp_drawio_create_use_case_diagram(group_name, actors[], use_cases[])&#xa;  → UML use case (actors + ovals + relationships)&#xa;mcp_drawio_create_sequence_diagram(flow_name, participants[], messages[])&#xa;  → UML sequence (participants × time, sync/async msgs, returns)&#xa;mcp_drawio_export_to_png(diagram_path)&#xa;  → embeds in BRD section 3 Functional Requirements&#xa;embed_diagram_in_fr(fr_id, png_path, caption)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="180" width="380" height="450" as="geometry"/>
+        </mxCell>
+
+        <!-- HITL Gate after FRs -->
+        <mxCell id="b-hitl1" value="🔔 HITL GATE&#xa;━━━━━━━━&#xa;User reviews FR&#xa;coverage + AC&#xa;before NFR" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1740" y="280" width="120" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- B7 -->
+        <mxCell id="b7" value="B7 · INTERFACES + NFR + FEATURES&#xa;━━━━━━━━━━━&#xa;12 tools&#xa;━━━━━━━━━━━&#xa;Interfaces (5):&#xa;set_brd_ui_notes(wireframe_refs)&#xa;set_brd_hardware()&#xa;set_brd_software_description()&#xa;set_brd_tech_stack(by_layer)&#xa;  ← reads solution.json tech_stack&#xa;set_brd_communication()&#xa;━━━━━━━━━━━&#xa;System Features (1):&#xa;set_brd_system_features()&#xa;━━━━━━━━━━━&#xa;NFR (5) — every target HAS unit:&#xa;update_nfr_category(&quot;performance&quot;)&#xa;update_nfr_category(&quot;safety&quot;)&#xa;update_nfr_category(&quot;security&quot;)&#xa;update_nfr_category(&quot;quality&quot;)&#xa;validate_nfr_targets()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="180" width="260" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- B8 -->
+        <mxCell id="b8" value="B8 · RISK &amp; APPENDIX&#xa;━━━━━━━━━━━&#xa;5 tools  ★ BA: risk + SWOT&#xa;━━━━━━━━━━━&#xa;set_brd_risk_register()&#xa;  → risk matrix:&#xa;     probability × impact&#xa;     mitigation strategy&#xa;     owner + status&#xa;set_brd_swot_analysis()&#xa;  → Strengths · Weaknesses&#xa;     Opportunities · Threats&#xa;add_analysis_model_ref()&#xa;  → links to drawio diagrams&#xa;     from solution agent&#xa;add_known_issue()&#xa;  → open items, blockers&#xa;append_abbreviation()&#xa;  → BA glossary&#xa;finalize_version_history()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="2160" y="180" width="240" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- B9 -->
+        <mxCell id="b9" value="B9 · CRITIC + REFINER + RENDER&#xa;━━━━━━━━━━━&#xa;8 tools&#xa;━━━━━━━━━━━&#xa;Critic (deterministic Python):&#xa;validate_brd()&#xa;  → FR_DUPLICATE_ID, NFR_NO_TARGET,&#xa;     BRD_MISSING_PURPOSE, …&#xa;validate_traceability_matrix() ★&#xa;  → BA: 100% FR ↔ BR ↔ AC&#xa;validate_acceptance_criteria()&#xa;  → every FR has ≥1 AC&#xa;━━━━━━━━━━━&#xa;If FAIL → loop back (max 3 retries)&#xa;━━━━━━━━━━━&#xa;Refiner (final polish):&#xa;check_language_consistency()&#xa;check_fr_numbering_continuity()&#xa;check_terminology_consistency()&#xa;check_business_rule_coverage()&#xa;━━━━━━━━━━━&#xa;Render:&#xa;render_brd_to_docx() (subprocess)&#xa;save_to_output_dir()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontStyle=1;align=left;spacingLeft=8;" vertex="1" parent="1">
+          <mxGeometry x="2420" y="180" width="340" height="450" as="geometry"/>
+        </mxCell>
+
+        <!-- Output banner -->
+        <mxCell id="b-output" value="✅ DELIVERABLE: OUTPUT_DIR/{project_name}/BRD/{project_name}_BRD_v0_1_0.docx&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Sections rendered: 1. Introduction (purpose, audience, intended_use, scope, abbreviations) | 2. General Description (user_needs, assumptions, business_rules)&#xa;3. Functional Requirements (FRs with user stories + use cases + AC + traceability) | 4. External Interfaces (UI, hardware, tech_stack, communication, system_features)&#xa;4.3 Non-Functional Requirements (performance, safety, security, quality — all with units) | Appendix (analysis_models, risk_register, SWOT, issues, version_history)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;align=left;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="660" width="2720" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- BA Methodologies callout -->
+        <mxCell id="b-methods" value="⭐ BA METHODOLOGIES INTEGRATED (from awesome-claude-code-subagents/business-analyst.md)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;DISCOVERY (B2-B3): SMART goals · stakeholder interviews · RACI matrix · influence × interest grid · persona modeling · journey mapping · KPI framework&#xa;PROCESS (B4):       BPMN AS-IS · BPMN TO-BE · gap analysis · value stream mapping · root cause analysis · cost-benefit analysis · waste identification&#xa;ELICITATION (B5-B6): user stories (As-X-I-want-So-that) · use cases (actor + flows + alt + exceptions) · acceptance criteria (Given-When-Then BDD)&#xa;MODELING (B7):      data flow diagrams · ERD references · system context · component breakdown · UI wireframes&#xa;RISK (B8):          risk register (prob × impact) · SWOT analysis · mitigation strategy · risk owner&#xa;VALIDATION (B9):    100% requirements traceability matrix (FR ↔ BR ↔ AC ↔ Test) · ROI verification · success metrics · change impact assessment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=12;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="800" width="2720" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- DIAGRAM CAPABILITY callout (NEW) -->
+        <mxCell id="b-diagrams" value="🎨 DIAGRAM GENERATION CAPABILITY (XML → PNG via MCP drawio · embedded in BRD .docx)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Phase  | Diagram Type            | Purpose                                              | Tool                                          | Output&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;B4     | BPMN AS-IS process       | Current manual workflow (with pain points)            | mcp_drawio_create_bpmn_as_is(activities, swimlanes)  | bpmn_as_is.drawio + .png&#xa;B4     | BPMN TO-BE process       | Future automated workflow (target state)              | mcp_drawio_create_bpmn_to_be(activities, swimlanes)  | bpmn_to_be.drawio + .png&#xa;B4     | Value Stream Map         | Identify waste, bottlenecks, optimization             | mcp_drawio_create_value_stream(steps, metrics)       | value_stream.drawio + .png&#xa;B6     | Use Case Diagram (UML)   | Actors + use cases + relationships (per FR group)     | mcp_drawio_create_use_case_diagram(actors, ucs)      | use_case_*.drawio + .png&#xa;B6     | Sequence Diagram (UML)   | Time-ordered messages between participants            | mcp_drawio_create_sequence_diagram(parts, msgs)      | sequence_*.drawio + .png&#xa;B7     | Data Flow Diagram L0/L1  | System context + data sources/sinks                   | mcp_drawio_create_dfd(entities, processes, stores)   | dfd_*.drawio + .png&#xa;B7     | State Diagram (UML)      | Stateful entity transitions (Order, Claim, ...)       | mcp_drawio_create_state_diagram(entity, transitions) | state_*.drawio + .png&#xa;B7     | ERD reference             | Reuse from solution (no redraw)                       | embed_diagram_ref(solution_diagram_path)             | (link only)&#xa;B8     | Risk Heat Map             | Probability × Impact matrix                           | mcp_drawio_create_risk_matrix(risks)                 | risk_matrix.drawio + .png&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;Embedding: docxtpl supports {{ image(&apos;path/to/png&apos;, width=Mm(160)) }} → PNG embedded inline in .docx&#xa;Storage: workspace/{session}/diagrams/brd/*.drawio + *.png · also copied to OUTPUT_DIR/{project}/diagrams/&#xa;Reuse: Solution Agent diagrams (system_context, component, deployment) are LINKED in B7 appendix, not redrawn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8d5fc;strokeColor=#7B68A6;fontSize=9;align=left;spacingLeft=12;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1000" width="2720" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- All tools list -->
+        <mxCell id="b-tools" value="🔧 ALL 70 TOOLS USED IN BRD WORKFLOW (was 57, +13 MCP drawio diagram tools)&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;FOUNDATION (5):     load_requirement_analysis · load_solution · load_brd_template_structure · detect_language · init_brd&#xa;EXEC &amp; STRATEGIC (6): set_executive_summary · set_brd_purpose · set_brd_objectives_smart · set_brd_success_metrics · set_brd_business_case · set_brd_intended_use&#xa;STAKEHOLDER (5):    set_brd_intended_audience · set_brd_stakeholder_matrix · set_brd_user_personas · set_brd_user_journey · set_brd_communication_plan&#xa;SCOPE &amp; PROCESS (10): set_brd_scope_inscope · set_brd_scope_outofscope · set_brd_delivery_phases · set_brd_as_is_process · set_brd_to_be_process · set_brd_gap_analysis · set_brd_value_stream&#xa;                     ★ + mcp_drawio_create_bpmn_as_is · mcp_drawio_create_bpmn_to_be · mcp_drawio_create_value_stream&#xa;USER NEEDS (4):     set_brd_user_needs · set_brd_assumptions · set_brd_business_rules · set_brd_constraints&#xa;FUNCTIONAL + DIAGRAMS (9): upsert_fr · add_user_story · add_use_case · add_acceptance_criteria · link_fr_to_business_rule&#xa;                          ★ + mcp_drawio_create_use_case_diagram · mcp_drawio_create_sequence_diagram · mcp_drawio_export_to_png · embed_diagram_in_fr&#xa;INTERFACES + NFR (14): set_brd_ui_notes · set_brd_hardware · set_brd_software_description · set_brd_tech_stack · set_brd_communication · set_brd_system_features&#xa;                       update_nfr_category × 4 (perf/safety/security/quality) · validate_nfr_targets · update_nfr_with_units&#xa;                       ★ + mcp_drawio_create_dfd · mcp_drawio_create_state_diagram&#xa;RISK + APPENDIX (6): set_brd_risk_register · set_brd_swot_analysis · add_analysis_model_ref · add_known_issue · append_abbreviation · finalize_version_history&#xa;                    ★ + mcp_drawio_create_risk_matrix&#xa;CRITIC (3):         validate_brd · validate_traceability_matrix · validate_acceptance_criteria&#xa;REFINER (4):        check_language_consistency · check_fr_numbering_continuity · check_terminology_consistency · check_business_rule_coverage&#xa;RENDER (4):         render_brd_to_docx (subprocess, embeds PNG via docxtpl) · save_to_output_dir · upload_to_s3 · verify_embedded_diagrams" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#d79b00;fontSize=9;align=left;spacingLeft=12;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1340" width="2720" height="320" as="geometry"/>
+        </mxCell>
+
+        <!-- Edge cases / failure modes -->
+        <mxCell id="b-edges" value="⚠️ EDGE CASES &amp; FAILURE MODES&#xa;━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━&#xa;❌ Solution.json missing                  → critic flag CRITICAL_FOUNDATION_MISSING; halt; ask user to run pre-processing first&#xa;❌ FR has no acceptance criteria (B6→B9)  → validator flag FR_NO_AC; loop back to B6 with target FR id&#xa;❌ NFR row missing measurable unit         → validator flag NFR_NO_TARGET; loop back to B7&#xa;❌ Traceability gap (FR ↔ BR ↔ AC)        → validator flag TRACE_GAP; show matrix to user; ask for confirmation or fix&#xa;❌ MCP drawio session unavailable          → fallback: render Mermaid markdown text (still embeddable as image via puppeteer); flag DRAWIO_FALLBACK&#xa;❌ PNG export fails                        → retry once with different format (SVG); embed SVG in .docx instead&#xa;❌ Diagram too complex (&gt;50 nodes)         → split into sub-diagrams (per actor / per process); flag DIAGRAM_OVERSIZED&#xa;❌ Language mix (random English in VI)    → refiner flag LANG_INCONSISTENT; highlight + suggest fix&#xa;❌ FR numbering gap (FR1, FR3 missing FR2) → refiner flag FR_NUMBERING_GAP; auto-renumber if &lt; 5 FRs&#xa;❌ Render fails (docxtpl)                  → log subprocess stderr; retry once; escalate to user with diagnostic&#xa;❌ Critic loop &gt; 3 retries on same FR     → escalate to user; do not auto-fix BA-judgment items&#xa;❌ User wants to edit FR3 description     → INCREMENTAL: call upsert_fr(section_id=existing_uuid, description=new); RE-render only; no full regen&#xa;❌ User wants to edit a diagram            → INCREMENTAL: mcp_drawio_edit_diagram(operations); re-export PNG; re-render only that section" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=12;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1680" width="2720" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges B1 → B9 -->
+        <mxCell id="be1" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="b1" target="b2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="be2" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="b2" target="b3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="be3" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="b3" target="b4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="be4" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="b4" target="b5" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="be5" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="b5" target="b6" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="be6" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.3;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="b6" target="b-hitl1" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="be7" value="OK" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;fontStyle=1;" edge="1" source="b-hitl1" target="b7" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="be8" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeColor=#82b366;strokeWidth=2;" edge="1" source="b7" target="b8" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="be9" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.3;strokeColor=#82b366;strokeWidth=2;" edge="1" source="b8" target="b9" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Critic loop back -->
+        <mxCell id="be-loop" value="❌ FAIL  loop back (max 3)" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=1;strokeColor=#b85450;strokeWidth=2;fontStyle=2;fontSize=10;" edge="1" source="b9" target="b6" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2590" y="650"/>
+              <mxPoint x="1530" y="650"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- B6 HITL re-edit back -->
+        <mxCell id="be-hitl-back" value="needs FR fix" style="endArrow=classic;html=1;rounded=0;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=1;strokeColor=#d6b656;strokeWidth=2;fontStyle=2;fontSize=9;" edge="1" source="b-hitl1" target="b6" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1800" y="640"/>
+              <mxPoint x="1530" y="640"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- B9 → output -->
+        <mxCell id="be-out" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;entryX=0.95;entryY=0;strokeColor=#82b366;strokeWidth=3;" edge="1" source="b9" target="b-output" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

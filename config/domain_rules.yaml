@@ -1,0 +1,436 @@
+# BnK DeepAgent — Domain Rules (24 industry profiles)
+# Edit this file to tune effort multipliers per domain.
+# Loaded by tools/effort_ops.py at runtime.
+
+# ════════════════════════════════════════════════════════════════════════════
+# Schema for each domain:
+#   multipliers:
+#     be_multiplier:   float   # Backend effort × this
+#     fe_multiplier:   float   # Frontend
+#     ai_multiplier:   float   # AI/ML
+#   ratios:
+#     qc_pct:          float   # QC effort = dev × this
+#     ba_pct:          float   # BA effort = dev × this
+#     pm_pct:          float   # PM effort = (dev+ba+qc) × this
+#   durations:
+#     uat_weeks:       int
+#     deploy_days_per_env: int
+#     hypercare_weeks: int
+#   buffers:
+#     base_buffer_pct: int     # 10-30 (regulatory risk)
+#     integration_overhead_md: float  # per integration
+#   mandatory_tasks:
+#     - id, category, md, role
+#   default_deployment_env:    cloud | on_premise | hybrid
+#   default_compliance:        list of standards
+#   default_archs_recommended: list of architecture types
+#   default_archs_avoided:     list
+#   notes:                     human-readable summary
+# ════════════════════════════════════════════════════════════════════════════
+
+banking:
+  multipliers: {be_multiplier: 1.30, fe_multiplier: 1.05, ai_multiplier: 1.20}
+  ratios: {qc_pct: 0.40, ba_pct: 0.20, pm_pct: 0.10}
+  durations: {uat_weeks: 4, deploy_days_per_env: 5, hypercare_weeks: 12}
+  buffers: {base_buffer_pct: 20, integration_overhead_md: 1.0}
+  mandatory_tasks:
+    - {id: pen_test,        category: security, md: 5, role: be}
+    - {id: cab_approval,    category: deploy,   md: 2, role: pm}
+    - {id: compliance_doc,  category: doc,      md: 3, role: ba}
+    - {id: dr_test,         category: deploy,   md: 3, role: be}
+    - {id: audit_trail,     category: feature,  md: 5, role: be}
+    - {id: sast,            category: security, md: 2, role: be}
+    - {id: dast,            category: security, md: 2, role: be}
+    - {id: vault_setup,     category: security, md: 3, role: be}
+  default_deployment_env: on_premise
+  default_compliance: [PCI-DSS, ISO 27001, SOC 2]
+  default_archs_recommended: [microservices, modular_monolith]
+  default_archs_avoided: [serverless]
+  notes: "On-prem likely. Multi-round UAT (4 weeks). CAB approval gates each deploy. SIEM + Vault mandatory."
+
+fintech:
+  multipliers: {be_multiplier: 1.20, fe_multiplier: 1.05, ai_multiplier: 1.15}
+  ratios: {qc_pct: 0.35, ba_pct: 0.15, pm_pct: 0.08}
+  durations: {uat_weeks: 3, deploy_days_per_env: 3, hypercare_weeks: 8}
+  buffers: {base_buffer_pct: 18, integration_overhead_md: 0.8}
+  mandatory_tasks:
+    - {id: pen_test,        category: security, md: 4, role: be}
+    - {id: kyc_compliance,  category: feature,  md: 5, role: be}
+    - {id: audit_trail,     category: feature,  md: 4, role: be}
+    - {id: sast,            category: security, md: 2, role: be}
+    - {id: payment_audit,   category: security, md: 3, role: be}
+  default_deployment_env: cloud
+  default_compliance: [PCI-DSS, KYC, AML]
+  default_archs_recommended: [microservices, event_driven]
+  notes: "Cloud-first. KYC/AML mandatory. Payment gateway integration overhead."
+
+insurance:
+  multipliers: {be_multiplier: 1.25, fe_multiplier: 1.05, ai_multiplier: 1.15}
+  ratios: {qc_pct: 0.40, ba_pct: 0.20, pm_pct: 0.10}
+  durations: {uat_weeks: 3, deploy_days_per_env: 4, hypercare_weeks: 10}
+  buffers: {base_buffer_pct: 18, integration_overhead_md: 0.8}
+  mandatory_tasks:
+    - {id: regulatory_audit,        category: doc,     md: 4, role: ba}
+    - {id: audit_trail,             category: feature, md: 5, role: be}
+    - {id: business_rule_validation, category: test,   md: 5, role: qc}
+    - {id: doc_generation,          category: feature, md: 5, role: be}
+    - {id: claim_workflow_test,     category: test,    md: 3, role: qc}
+  default_deployment_env: hybrid
+  default_compliance: [ISO 27001, regulatory_local]
+  default_archs_recommended: [microservices, modular_monolith]
+  notes: "Heavy business rules. Maker-checker workflow. Renewal/SLA flows are separate large modules."
+
+healthcare:
+  multipliers: {be_multiplier: 1.20, fe_multiplier: 1.05, ai_multiplier: 1.15}
+  ratios: {qc_pct: 0.35, ba_pct: 0.18, pm_pct: 0.10}
+  durations: {uat_weeks: 3, deploy_days_per_env: 3, hypercare_weeks: 8}
+  buffers: {base_buffer_pct: 18, integration_overhead_md: 0.8}
+  mandatory_tasks:
+    - {id: hipaa_audit,         category: security, md: 4, role: be}
+    - {id: data_privacy_review, category: security, md: 3, role: be}
+    - {id: audit_trail,         category: feature,  md: 4, role: be}
+    - {id: anonymization,       category: feature,  md: 3, role: be}
+    - {id: clinical_uat,        category: test,     md: 5, role: ba}
+  default_deployment_env: hybrid
+  default_compliance: [HIPAA, HL7, FHIR, PDPA]
+  default_archs_recommended: [microservices, event_driven]
+  notes: "Patient data privacy mandatory. Clinical UAT with doctors. HL7/FHIR integrations."
+
+government:
+  multipliers: {be_multiplier: 1.15, fe_multiplier: 1.10, ai_multiplier: 1.10}
+  ratios: {qc_pct: 0.35, ba_pct: 0.25, pm_pct: 0.10}
+  durations: {uat_weeks: 4, deploy_days_per_env: 5, hypercare_weeks: 12}
+  buffers: {base_buffer_pct: 25, integration_overhead_md: 1.0}
+  mandatory_tasks:
+    - {id: security_clearance_review, category: security, md: 3, role: be}
+    - {id: srs_signoff,               category: doc,      md: 5, role: ba}
+    - {id: uat_report,                category: doc,      md: 3, role: ba}
+    - {id: training_doc,              category: doc,      md: 4, role: ba}
+    - {id: vapt,                      category: security, md: 5, role: be}
+    - {id: accessibility_audit,       category: test,     md: 2, role: qc}
+  default_deployment_env: on_premise
+  default_compliance: [ISO 27001, government_local]
+  default_archs_recommended: [modular_monolith]
+  default_archs_avoided: [serverless, blockchain]
+  notes: "Long approval cycles. Heavy docs (TDD, SRS, UAT report). Citizen-facing → accessibility."
+
+defense:
+  multipliers: {be_multiplier: 1.40, fe_multiplier: 1.20, ai_multiplier: 1.30}
+  ratios: {qc_pct: 0.45, ba_pct: 0.25, pm_pct: 0.12}
+  durations: {uat_weeks: 6, deploy_days_per_env: 7, hypercare_weeks: 16}
+  buffers: {base_buffer_pct: 30, integration_overhead_md: 2.0}
+  mandatory_tasks:
+    - {id: air_gapped_test,         category: test,     md: 5, role: be}
+    - {id: security_clearance,      category: security, md: 3, role: pm}
+    - {id: supply_chain_audit,      category: security, md: 4, role: be}
+    - {id: classified_review,       category: doc,      md: 5, role: ba}
+    - {id: tempest_compliance,      category: security, md: 3, role: be}
+    - {id: redundancy_test,         category: test,     md: 4, role: qc}
+  default_deployment_env: on_premise
+  default_compliance: [air_gapped, classified, military_standard]
+  default_archs_recommended: [modular_monolith]
+  default_archs_avoided: [cloud, microservices, serverless]
+  notes: "Air-gapped. Classified data. Tempest compliance. Triple-redundant systems."
+
+ecommerce:
+  multipliers: {be_multiplier: 1.10, fe_multiplier: 1.10, ai_multiplier: 1.10}
+  ratios: {qc_pct: 0.28, ba_pct: 0.12, pm_pct: 0.08}
+  durations: {uat_weeks: 2, deploy_days_per_env: 2, hypercare_weeks: 4}
+  buffers: {base_buffer_pct: 12, integration_overhead_md: 0.5}
+  mandatory_tasks:
+    - {id: payment_security_audit, category: security, md: 3, role: be}
+    - {id: load_test,              category: test,     md: 3, role: qc}
+    - {id: accessibility_audit,    category: test,     md: 2, role: qc}
+    - {id: seo_audit,              category: test,     md: 1, role: ba}
+  default_deployment_env: cloud
+  default_compliance: [PCI-DSS, PDPA]
+  default_archs_recommended: [microservices, serverless]
+  notes: "Cloud-native. Payment gateway integration. Load testing critical (Black Friday)."
+
+retail:
+  multipliers: {be_multiplier: 1.10, fe_multiplier: 1.10, ai_multiplier: 1.05}
+  ratios: {qc_pct: 0.28, ba_pct: 0.13, pm_pct: 0.08}
+  durations: {uat_weeks: 2, deploy_days_per_env: 3, hypercare_weeks: 4}
+  buffers: {base_buffer_pct: 12, integration_overhead_md: 0.6}
+  mandatory_tasks:
+    - {id: offline_mode_test,    category: test,     md: 3, role: qc}
+    - {id: pos_certification,    category: test,     md: 4, role: be}
+    - {id: payment_audit,        category: security, md: 2, role: be}
+    - {id: multi_outlet_test,    category: test,     md: 3, role: qc}
+  default_deployment_env: hybrid
+  default_compliance: [PCI-DSS]
+  default_archs_recommended: [microservices, modular_monolith]
+  notes: "POS hardware integration. Offline mode mandatory (network-flaky stores)."
+
+logistics:
+  multipliers: {be_multiplier: 1.15, fe_multiplier: 1.10, ai_multiplier: 1.15}
+  ratios: {qc_pct: 0.30, ba_pct: 0.14, pm_pct: 0.08}
+  durations: {uat_weeks: 2, deploy_days_per_env: 2, hypercare_weeks: 6}
+  buffers: {base_buffer_pct: 15, integration_overhead_md: 0.8}
+  mandatory_tasks:
+    - {id: realtime_test,            category: test,     md: 3, role: qc}
+    - {id: gps_integration_test,     category: test,     md: 2, role: qc}
+    - {id: multi_carrier_audit,      category: integration, md: 5, role: be}
+    - {id: route_optimization_test,  category: test,     md: 3, role: qc}
+  default_deployment_env: cloud
+  default_compliance: []
+  default_archs_recommended: [microservices, event_driven]
+  notes: "Real-time GPS tracking. Multiple shipping carriers. Route optimization."
+
+transportation:
+  multipliers: {be_multiplier: 1.20, fe_multiplier: 1.15, ai_multiplier: 1.20}
+  ratios: {qc_pct: 0.32, ba_pct: 0.14, pm_pct: 0.09}
+  durations: {uat_weeks: 2, deploy_days_per_env: 3, hypercare_weeks: 6}
+  buffers: {base_buffer_pct: 18, integration_overhead_md: 1.0}
+  mandatory_tasks:
+    - {id: safety_audit,        category: security,    md: 4, role: be}
+    - {id: gps_certification,   category: test,        md: 3, role: qc}
+    - {id: latency_test,        category: test,        md: 3, role: qc}
+    - {id: geo_compliance,      category: doc,         md: 2, role: ba}
+    - {id: payment_split_test,  category: test,        md: 2, role: qc}
+  default_deployment_env: cloud
+  default_compliance: [transport_local]
+  default_archs_recommended: [microservices, event_driven]
+  notes: "Real-time matching. Driver+rider apps. Payment splits."
+
+telecom:
+  multipliers: {be_multiplier: 1.30, fe_multiplier: 1.10, ai_multiplier: 1.15}
+  ratios: {qc_pct: 0.38, ba_pct: 0.18, pm_pct: 0.10}
+  durations: {uat_weeks: 4, deploy_days_per_env: 5, hypercare_weeks: 12}
+  buffers: {base_buffer_pct: 20, integration_overhead_md: 1.2}
+  mandatory_tasks:
+    - {id: tmf_compliance,       category: doc,         md: 4, role: ba}
+    - {id: ha_failover_test,     category: test,        md: 5, role: qc}
+    - {id: nfv_compliance,       category: integration, md: 4, role: be}
+    - {id: oss_bss_audit,        category: integration, md: 5, role: be}
+    - {id: capacity_test,        category: test,        md: 4, role: qc}
+  default_deployment_env: on_premise
+  default_compliance: [TM Forum, 3GPP, ETSI]
+  default_archs_recommended: [microservices, modular_monolith]
+  notes: "BSS/OSS integration. 99.999% availability target. NFV/SDN."
+
+manufacturing:
+  multipliers: {be_multiplier: 1.20, fe_multiplier: 1.05, ai_multiplier: 1.25}
+  ratios: {qc_pct: 0.32, ba_pct: 0.14, pm_pct: 0.09}
+  durations: {uat_weeks: 3, deploy_days_per_env: 4, hypercare_weeks: 8}
+  buffers: {base_buffer_pct: 18, integration_overhead_md: 1.5}
+  mandatory_tasks:
+    - {id: edge_calibration,    category: deploy,      md: 5, role: ai}
+    - {id: ot_security,         category: security,    md: 4, role: be}
+    - {id: sensor_fmea,         category: doc,         md: 3, role: ba}
+    - {id: plc_integration,     category: integration, md: 8, role: be}
+    - {id: opc_ua_test,         category: test,        md: 3, role: qc}
+  default_deployment_env: hybrid
+  default_compliance: [ISA/IEC 62443, OPC-UA]
+  default_archs_recommended: [edge_first, modular_monolith]
+  notes: "Edge AI. PLC/SCADA integration. OT/IT convergence. FMEA mandatory for safety-critical."
+
+energy:
+  multipliers: {be_multiplier: 1.30, fe_multiplier: 1.10, ai_multiplier: 1.20}
+  ratios: {qc_pct: 0.38, ba_pct: 0.18, pm_pct: 0.10}
+  durations: {uat_weeks: 4, deploy_days_per_env: 5, hypercare_weeks: 12}
+  buffers: {base_buffer_pct: 22, integration_overhead_md: 1.5}
+  mandatory_tasks:
+    - {id: scada_security,    category: security, md: 5, role: be}
+    - {id: asset_audit,       category: doc,      md: 3, role: ba}
+    - {id: hazop,             category: doc,      md: 4, role: ba}
+    - {id: hse_review,        category: doc,      md: 3, role: ba}
+    - {id: opc_ua_test,       category: test,     md: 3, role: qc}
+    - {id: fail_safe_test,    category: test,     md: 4, role: qc}
+  default_deployment_env: on_premise
+  default_compliance: [IEC 61850, NERC CIP, ISA/IEC 62443]
+  default_archs_recommended: [edge_first, modular_monolith]
+  notes: "SCADA. Air-gapped likely. HAZOP/HSE reviews. Long change windows."
+
+agriculture:
+  multipliers: {be_multiplier: 1.10, fe_multiplier: 1.10, ai_multiplier: 1.20}
+  ratios: {qc_pct: 0.28, ba_pct: 0.14, pm_pct: 0.08}
+  durations: {uat_weeks: 2, deploy_days_per_env: 2, hypercare_weeks: 6}
+  buffers: {base_buffer_pct: 14, integration_overhead_md: 0.8}
+  mandatory_tasks:
+    - {id: sensor_field_test,        category: test,     md: 3, role: ai}
+    - {id: weather_data_validation,  category: integration, md: 2, role: be}
+    - {id: offline_sync,             category: feature,  md: 3, role: be}
+    - {id: edge_battery_test,        category: test,     md: 2, role: qc}
+  default_deployment_env: hybrid
+  default_compliance: []
+  default_archs_recommended: [edge_first, microservices]
+  notes: "Field sensors with intermittent connectivity. Weather APIs. ML for yield prediction."
+
+education:
+  multipliers: {be_multiplier: 1.10, fe_multiplier: 1.10, ai_multiplier: 1.10}
+  ratios: {qc_pct: 0.28, ba_pct: 0.13, pm_pct: 0.08}
+  durations: {uat_weeks: 2, deploy_days_per_env: 2, hypercare_weeks: 4}
+  buffers: {base_buffer_pct: 12, integration_overhead_md: 0.5}
+  mandatory_tasks:
+    - {id: accessibility_audit,   category: test,     md: 3, role: qc}
+    - {id: parental_consent,      category: feature,  md: 2, role: be}
+    - {id: content_review,        category: doc,      md: 2, role: ba}
+    - {id: gradebook_test,        category: test,     md: 2, role: qc}
+  default_deployment_env: cloud
+  default_compliance: [COPPA, FERPA, PDPA, WCAG]
+  default_archs_recommended: [microservices, modular_monolith]
+  notes: "Mobile-first. Accessibility (WCAG AA). Multi-tenant SaaS common."
+
+media:
+  multipliers: {be_multiplier: 1.15, fe_multiplier: 1.15, ai_multiplier: 1.15}
+  ratios: {qc_pct: 0.30, ba_pct: 0.12, pm_pct: 0.08}
+  durations: {uat_weeks: 2, deploy_days_per_env: 2, hypercare_weeks: 4}
+  buffers: {base_buffer_pct: 14, integration_overhead_md: 0.8}
+  mandatory_tasks:
+    - {id: drm_audit,         category: security,   md: 3, role: be}
+    - {id: cdn_test,          category: test,       md: 3, role: qc}
+    - {id: encoding_test,     category: test,       md: 3, role: qc}
+    - {id: copyright_check,   category: doc,        md: 2, role: ba}
+    - {id: ad_integration,    category: integration, md: 4, role: be}
+  default_deployment_env: cloud
+  default_compliance: [DRM, GDPR]
+  default_archs_recommended: [microservices, edge_cdn]
+  notes: "Video streaming. CDN-heavy. DRM mandatory. Encoding pipeline."
+
+gaming:
+  multipliers: {be_multiplier: 1.15, fe_multiplier: 1.20, ai_multiplier: 1.15}
+  ratios: {qc_pct: 0.35, ba_pct: 0.10, pm_pct: 0.08}
+  durations: {uat_weeks: 2, deploy_days_per_env: 2, hypercare_weeks: 6}
+  buffers: {base_buffer_pct: 18, integration_overhead_md: 0.8}
+  mandatory_tasks:
+    - {id: latency_test,           category: test,     md: 4, role: qc}
+    - {id: multiplayer_load_test,  category: test,     md: 5, role: qc}
+    - {id: anti_cheat_audit,       category: security, md: 4, role: be}
+    - {id: matchmaking_test,       category: test,     md: 3, role: qc}
+  default_deployment_env: cloud
+  default_compliance: [ESRB, PEGI]
+  default_archs_recommended: [microservices, event_driven]
+  notes: "Real-time multiplayer. Anti-cheat. Latency-critical (<100ms)."
+
+fnb:
+  multipliers: {be_multiplier: 1.10, fe_multiplier: 1.10, ai_multiplier: 1.05}
+  ratios: {qc_pct: 0.28, ba_pct: 0.12, pm_pct: 0.08}
+  durations: {uat_weeks: 2, deploy_days_per_env: 2, hypercare_weeks: 4}
+  buffers: {base_buffer_pct: 12, integration_overhead_md: 0.5}
+  mandatory_tasks:
+    - {id: offline_pos_test,    category: test,     md: 3, role: qc}
+    - {id: payment_audit,       category: security, md: 2, role: be}
+    - {id: multi_outlet_test,   category: test,     md: 3, role: qc}
+    - {id: kitchen_print_test,  category: test,     md: 1, role: qc}
+  default_deployment_env: hybrid
+  default_compliance: [PCI-DSS]
+  default_archs_recommended: [modular_monolith]
+  notes: "Restaurant POS + reservation. Offline mode. Multi-outlet management."
+
+real_estate:
+  multipliers: {be_multiplier: 1.10, fe_multiplier: 1.10, ai_multiplier: 1.10}
+  ratios: {qc_pct: 0.28, ba_pct: 0.13, pm_pct: 0.08}
+  durations: {uat_weeks: 2, deploy_days_per_env: 2, hypercare_weeks: 4}
+  buffers: {base_buffer_pct: 12, integration_overhead_md: 0.6}
+  mandatory_tasks:
+    - {id: listing_data_validation, category: test,     md: 2, role: qc}
+    - {id: geo_compliance,          category: doc,      md: 2, role: ba}
+    - {id: escrow_audit,            category: security, md: 3, role: be}
+    - {id: virtual_tour_test,       category: test,     md: 2, role: qc}
+  default_deployment_env: cloud
+  default_compliance: [real_estate_local]
+  default_archs_recommended: [microservices, modular_monolith]
+  notes: "Listings portal + agent CRM. Geo search. Virtual tours."
+
+legal_tech:
+  multipliers: {be_multiplier: 1.15, fe_multiplier: 1.10, ai_multiplier: 1.20}
+  ratios: {qc_pct: 0.30, ba_pct: 0.18, pm_pct: 0.10}
+  durations: {uat_weeks: 3, deploy_days_per_env: 3, hypercare_weeks: 8}
+  buffers: {base_buffer_pct: 16, integration_overhead_md: 0.8}
+  mandatory_tasks:
+    - {id: legal_review,          category: doc,      md: 3, role: ba}
+    - {id: contract_audit,        category: feature,  md: 4, role: be}
+    - {id: doc_anonymization,     category: feature,  md: 3, role: be}
+    - {id: data_retention,        category: feature,  md: 2, role: be}
+    - {id: redaction_test,        category: test,     md: 2, role: qc}
+  default_deployment_env: cloud
+  default_compliance: [GDPR, attorney_client_privilege]
+  default_archs_recommended: [microservices]
+  notes: "Contract analysis. Legal AI. Privilege/confidentiality preservation."
+
+hr_tech:
+  multipliers: {be_multiplier: 1.15, fe_multiplier: 1.10, ai_multiplier: 1.10}
+  ratios: {qc_pct: 0.30, ba_pct: 0.16, pm_pct: 0.10}
+  durations: {uat_weeks: 3, deploy_days_per_env: 3, hypercare_weeks: 6}
+  buffers: {base_buffer_pct: 16, integration_overhead_md: 0.8}
+  mandatory_tasks:
+    - {id: payroll_audit,    category: doc,      md: 3, role: ba}
+    - {id: tax_compliance,   category: doc,      md: 4, role: ba}
+    - {id: gdpr_audit,       category: security, md: 2, role: be}
+    - {id: payslip_test,     category: test,     md: 2, role: qc}
+  default_deployment_env: cloud
+  default_compliance: [GDPR, PDPA, tax_local]
+  default_archs_recommended: [modular_monolith, microservices]
+  notes: "HRIS + payroll. Tax engine per country. Multi-currency."
+
+ai_ml_platform:
+  multipliers: {be_multiplier: 1.10, fe_multiplier: 1.05, ai_multiplier: 1.25}
+  ratios: {qc_pct: 0.30, ba_pct: 0.15, pm_pct: 0.10}
+  durations: {uat_weeks: 2, deploy_days_per_env: 3, hypercare_weeks: 8}
+  buffers: {base_buffer_pct: 20, integration_overhead_md: 1.0}
+  mandatory_tasks:
+    - {id: model_validation,        category: test,     md: 4, role: ai}
+    - {id: data_lineage,            category: feature,  md: 3, role: be}
+    - {id: mlops_pipeline_test,     category: test,     md: 4, role: ai}
+    - {id: drift_monitoring,        category: feature,  md: 4, role: be}
+    - {id: model_versioning,        category: feature,  md: 2, role: be}
+    - {id: feature_store_test,      category: test,     md: 3, role: qc}
+  default_deployment_env: cloud
+  default_compliance: [model_governance, data_lineage]
+  default_archs_recommended: [microservices, event_driven]
+  notes: "MLOps platform. Data lake + feature store + model registry."
+
+blockchain:
+  multipliers: {be_multiplier: 1.30, fe_multiplier: 1.10, ai_multiplier: 1.10}
+  ratios: {qc_pct: 0.40, ba_pct: 0.18, pm_pct: 0.12}
+  durations: {uat_weeks: 4, deploy_days_per_env: 5, hypercare_weeks: 12}
+  buffers: {base_buffer_pct: 25, integration_overhead_md: 1.5}
+  mandatory_tasks:
+    - {id: smart_contract_audit, category: security, md: 8, role: be}
+    - {id: formal_verification,  category: test,     md: 5, role: qc}
+    - {id: gas_optimization,     category: feature,  md: 3, role: be}
+    - {id: key_mgmt,             category: security, md: 4, role: be}
+    - {id: testnet_deploy,       category: deploy,   md: 2, role: be}
+    - {id: mainnet_deploy,       category: deploy,   md: 3, role: be}
+  default_deployment_env: hybrid
+  default_compliance: [smart_contract_audit, MiCA]
+  default_archs_recommended: [microservices, event_driven]
+  notes: "Smart contract audit mandatory. Immutable = bugs are catastrophic. Formal verification."
+
+ngo:
+  multipliers: {be_multiplier: 1.0, fe_multiplier: 1.0, ai_multiplier: 1.0}
+  ratios: {qc_pct: 0.25, ba_pct: 0.12, pm_pct: 0.05}
+  durations: {uat_weeks: 2, deploy_days_per_env: 1, hypercare_weeks: 2}
+  buffers: {base_buffer_pct: 10, integration_overhead_md: 0.3}
+  mandatory_tasks:
+    - {id: donor_audit,             category: doc,      md: 2, role: ba}
+    - {id: low_budget_optimization, category: feature,  md: 1, role: be}
+  default_deployment_env: cloud
+  default_compliance: [donor_transparency]
+  default_archs_recommended: [modular_monolith, serverless]
+  notes: "Budget-constrained. Donor management. Public reporting."
+
+research:
+  multipliers: {be_multiplier: 1.0, fe_multiplier: 1.0, ai_multiplier: 1.10}
+  ratios: {qc_pct: 0.20, ba_pct: 0.10, pm_pct: 0.05}
+  durations: {uat_weeks: 1, deploy_days_per_env: 1, hypercare_weeks: 2}
+  buffers: {base_buffer_pct: 10, integration_overhead_md: 0.3}
+  mandatory_tasks:
+    - {id: open_data_compliance, category: doc, md: 1, role: ba}
+    - {id: reproducibility,      category: doc, md: 2, role: ai}
+  default_deployment_env: cloud
+  default_compliance: [FAIR data, open_science]
+  default_archs_recommended: [modular_monolith]
+  notes: "Open data. Reproducibility-focused. Lower SLA OK."
+
+standard:
+  multipliers: {be_multiplier: 1.0, fe_multiplier: 1.0, ai_multiplier: 1.0}
+  ratios: {qc_pct: 0.25, ba_pct: 0.12, pm_pct: 0.05}
+  durations: {uat_weeks: 2, deploy_days_per_env: 1, hypercare_weeks: 4}
+  buffers: {base_buffer_pct: 10, integration_overhead_md: 0.5}
+  mandatory_tasks: []
+  default_deployment_env: cloud
+  default_compliance: []
+  default_archs_recommended: [modular_monolith, microservices]
+  notes: "Standard SaaS / internal tool. Cloud deployment. Normal QC coverage."

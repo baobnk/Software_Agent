@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@next-ai-drawio/mcp-server": "^0.2.0"
+  }
+}

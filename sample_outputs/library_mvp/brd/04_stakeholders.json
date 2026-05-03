@@ -1,0 +1,10 @@
+{
+  "stakeholders": [
+    {
+      "id": "SH3",
+      "name": "Library Assistant",
+      "role": "End User",
+      "responsibility": "Daily operation, feedback"
+    }
+  ]
+}

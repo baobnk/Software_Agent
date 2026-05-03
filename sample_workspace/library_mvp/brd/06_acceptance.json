@@ -1,0 +1,6 @@
+{
+  "acceptance_criteria": [
+    "Borrow and return flows accurately update book status and loan records.",
+    "Public catalog search returns relevant results within 2 seconds."
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "source": "12 real BnK WBS files (>650 leaf tasks)",
+    "files_analyzed": [
+      "[BnK] Template - WBS.xlsx",
+      "[BnK] [GE] - Solution WBS (1).xlsx",
+      "[BnK] [ABL] - Solution WBS.xlsx",
+      "[BnK] [SSV] - AI Driven Email Sentiment System WBS.xlsx",
+      "[BnK] [Zenwodd] - Solution WBS.xlsx",
+      "[BnK] WBS - HLAS.xlsx",
+      "(BnK) Underwritting Platform - Updated Ver 2.xlsx",
+      "MBAL-WBS nội bộ_Phase 2.xlsx",
+      "IDP 3.5 WBS.xlsx",
+      "[Project WBS] Aila_AI-Powered Legal Assistant_ (v0.1).xlsx",
+      "LED_Signboard_WBS.xlsx",
+      "GGF_Yield Prediction_WBS for Extension_draft.xlsx"
+    ],
+    "use_median_not_avg": true,
+    "extracted_at": "2026-04-26"
+  },
+
+  "design_phase": {
+    "workshop_brd_per_feature":   {"min": 0.6, "p25": 4.4, "median": 4.4, "avg": 4.7, "p75": 6.6, "max": 6.6, "n": 16, "role_split": {"ba": 0.91, "pm": 0.09}},
+    "db_schema_design":           {"min": 1.1, "p25": 5.5, "median": 5.5, "avg": 6.2, "p75": 5.5, "max": 13.2, "n": 10, "role_split": {"be": 0.62, "ba": 0.29}},
+    "system_architecture_hld":    {"min": 0.7, "p25": 5.3, "median": 7.7, "avg": 7.6, "p75": 7.7, "max": 22.0, "n": 13, "role_split": {"be": 0.41, "ba": 0.31, "ai": 0.17}},
+    "data_security_design":       {"min": 1.1, "p25": 4.4, "median": 4.4, "avg": 5.1, "p75": 5.5, "max": 11.0, "n": 10, "role_split": {"be": 0.67, "ba": 0.24}},
+    "ui_ux_design":               {"min": 3.3, "p25": 3.3, "median": 3.3, "avg": 10.2, "p75": 10.5, "max": 33.0, "n": 10, "role_split": {"fe": 0.39, "ba": 0.37, "be": 0.15}},
+    "code_base_setup":            {"min": 1.0, "p25": 2.2, "median": 2.2, "avg": 3.6, "p75": 5.5, "max": 11.0, "n": 12, "role_split": {"be": 0.62, "fe": 0.15}}
+  },
+
+  "frontend_pages": {
+    "crud_list_page":             {"min": 3.1,  "p25": 12.3, "median": 15.8, "avg": 15.7, "p75": 21.1, "max": 24.6, "n": 15, "role_split": {"fe": 0.32, "be": 0.25, "qc": 0.22}},
+    "crud_form_upload":           {"min": 12.3, "p25": 12.3, "median": 24.6, "avg": 18.5, "p75": 24.6, "max": 24.6, "n": 2,  "role_split": {"fe": 0.32, "be": 0.24, "qc": 0.23}},
+    "search_filter":              {"min": 5.3,  "p25": 12.3, "median": 17.6, "avg": 15.3, "p75": 17.6, "max": 21.1, "n": 6,  "role_split": {"be": 0.46, "qc": 0.23, "fe": 0.11}},
+    "auth_login":                 {"min": 0.5,  "p25": 1.0,  "median": 1.5,  "avg": 2.0,  "p75": 3.0,  "max": 5.0,  "n": 1,  "role_split": {"fe": 0.50, "be": 0.50}},
+    "role_permission_ui":         {"min": 1.8,  "p25": 7.7,  "median": 12.3, "avg": 10.9, "p75": 14.1, "max": 17.6, "n": 9,  "role_split": {"fe": 0.32, "be": 0.25}},
+    "audit_log_ui":               {"min": 2.8,  "p25": 8.8,  "median": 12.3, "avg": 13.2, "p75": 17.6, "max": 24.6, "n": 9,  "role_split": {"fe": 0.30, "be": 0.30, "qc": 0.20}},
+    "report_dashboard":           {"min": 0.8,  "p25": 5.5,  "median": 12.3, "avg": 11.0, "p75": 17.6, "max": 24.6, "n": 53, "role_split": {"fe": 0.30, "be": 0.25, "qc": 0.22}}
+  },
+
+  "backend_logic": {
+    "workflow_business_rules":    {"min": 3.1, "p25": 4.0, "median": 4.0, "avg": 7.9, "p75": 14.1, "max": 26.4, "n": 31, "role_split": {"be": 0.46, "qc": 0.20, "fe": 0.16}},
+    "notification_email_sms":     {"min": 1.4, "p25": 3.6, "median": 8.8, "avg": 7.2, "p75": 9.9, "max": 14.1, "n": 29, "role_split": {"be": 0.64, "qc": 0.18}},
+    "renewal_sla_flow":           {"min": 12.3, "p25": 14.1, "median": 17.6, "avg": 17.0, "p75": 21.1, "max": 24.6, "n": 12, "role_split": {"fe": 0.32, "be": 0.24, "qc": 0.23}},
+    "export_pdf_excel":           {"min": 3.0, "p25": 3.0, "median": 3.5, "avg": 3.4, "p75": 4.0, "max": 4.0, "n": 3, "role_split": {"be": 1.0}},
+    "third_party_integration":    {"min": 1.5, "p25": 7.0, "median": 13.2, "avg": 13.0, "p75": 14.1, "max": 52.8, "n": 22, "role_split": {"be": 0.45, "qc": 0.24}}
+  },
+
+  "ai_ml": {
+    "data_collect_label":         {"min": 3.5,  "p25": 3.5,  "median": 11.0, "avg": 10.2, "p75": 16.0, "max": 16.0, "n": 3,  "role_split": {"ai": 0.92}},
+    "data_prep_feature_eng":      {"min": 2.0,  "p25": 17.0, "median": 17.0, "avg": 13.8, "p75": 17.0, "max": 17.0, "n": 8,  "role_split": {"ai": 0.85}},
+    "train_model":                {"min": 6.3,  "p25": 19.0, "median": 19.0, "avg": 23.1, "p75": 22.0, "max": 88.0, "n": 12, "role_split": {"ai": 0.42, "be": 0.41}},
+    "inference_serving_api":      {"min": 1.3,  "p25": 5.5,  "median": 6.6,  "avg": 16.9, "p75": 13.2, "max": 118.8, "n": 31, "role_split": {"be": 0.42, "ai": 0.18}},
+    "benchmark_evaluation":       {"min": 1.9,  "p25": 2.0,  "median": 3.3,  "avg": 2.7,  "p75": 3.7,  "max": 3.7,  "n": 4,  "role_split": {"ai": 0.32, "fe": 0.23}},
+    "llm_tuning":                 {"min": 5.0,  "p25": 5.0,  "median": 10.0, "avg": 12.0, "p75": 20.0, "max": 45.0, "n": 5,  "role_split": {"ai": 1.0}},
+    "ocr_training":               {"min": 20.0, "p25": 20.0, "median": 20.0, "avg": 20.0, "p75": 20.0, "max": 20.0, "n": 1,  "role_split": {"ai": 1.0}}
+  },
+
+  "testing": {
+    "sit_small_project":          {"min": 2.9, "p25": 7.4, "median": 7.7, "avg": 6.5, "p75": 8.0, "max": 12.0, "n": 5, "role_split": {"qc": 0.60, "be": 0.20, "fe": 0.20}},
+    "sit_large_insurance":        {"min": 60,  "p25": 80,  "median": 105, "avg": 110, "p75": 130, "max": 158, "n": 5, "role_split": {"qc": 0.40, "be": 0.30, "fe": 0.30}},
+    "uat_support_per_cycle":      {"min": 5.0, "p25": 6.3, "median": 6.3, "avg": 7.0, "p75": 8.0, "max": 10.0, "n": 1, "role_split": {"be": 0.40, "ba": 0.30, "qc": 0.30}},
+    "bug_fix_bucket":             {"min": 5,   "p25": 5,   "median": 10,  "avg": 30,  "p75": 50,  "max": 158, "n": 10, "role_split": {"be": 0.30, "fe": 0.30, "qc": 0.23}},
+    "performance_test":           {"min": 2,   "p25": 3,   "median": 4,   "avg": 5,   "p75": 6,   "max": 10,  "n": 8, "role_split": {"qc": 0.70, "be": 0.30}},
+    "security_test":              {"min": 2,   "p25": 3,   "median": 5,   "avg": 6,   "p75": 8,   "max": 12,  "n": 6, "role_split": {"be": 0.70, "qc": 0.30}}
+  },
+
+  "deployment": {
+    "deployment_per_env":         {"min": 1.0, "p25": 5.3, "median": 6.6, "avg": 10.9, "p75": 9.9, "max": 79.2, "n": 36, "role_split": {"be": 0.37, "qc": 0.16, "fe": 0.13, "ai": 0.13}},
+    "deployment_one_env_simple":  {"min": 2.0, "p25": 2.0, "median": 2.0, "avg": 2.0,  "p75": 2.0, "max": 2.0,  "n": 1,  "role_split": {"be": 1.0}},
+    "production_deploy":          {"min": 2.0, "p25": 2.0, "median": 2.0, "avg": 2.5,  "p75": 3.0, "max": 5.0,  "n": 8,  "role_split": {"be": 0.70, "qc": 0.30}},
+    "hypercare_post_golive":      {"min": 1.7, "p25": 7.0, "median": 11.0, "avg": 13.6, "p75": 11.0, "max": 52.8, "n": 17, "role_split": {"be": 0.37, "fe": 0.27, "qc": 0.19}}
+  },
+
+  "documentation": {
+    "user_documentation":         {"min": 3.0, "p25": 3.0, "median": 3.0, "avg": 3.0, "p75": 3.0, "max": 3.0, "n": 1, "role_split": {"ba": 1.0}},
+    "training_workshop":          {"min": 2.0, "p25": 2.0, "median": 4.2, "avg": 3.1, "p75": 4.2, "max": 4.2, "n": 2, "role_split": {"ba": 0.50, "pm": 0.50}},
+    "api_doc":                    {"min": 1.0, "p25": 2.0, "median": 3.0, "avg": 3.0, "p75": 4.0, "max": 5.0, "n": 5, "role_split": {"be": 0.80, "ba": 0.20}}
+  },
+
+  "iot_specific": {
+    "edge_calibration":           {"min": 2.2, "p25": 2.2, "median": 5.5, "avg": 4.8, "p75": 6.6, "max": 6.6, "n": 3, "role_split": {"ai": 0.50, "be": 0.50}}
+  },
+
+  "project_size_envelope": {
+    "lending_baseline":         {"min_md": 130, "max_md": 200, "median_md": 150, "leaf_count_range": "30-50"},
+    "ai_cv_per_feature":        {"min_md": 200, "max_md": 350, "median_md": 280, "leaf_count_range": "30-40"},
+    "iot_mid_size":             {"min_md": 150, "max_md": 250, "median_md": 180, "leaf_count_range": "40-60"},
+    "insurance_system":         {"min_md": 1500, "max_md": 2600, "median_md": 2000, "leaf_count_range": "100-130"},
+    "ai_platform_internal":     {"min_md": 3000, "max_md": 4000, "median_md": 3500, "leaf_count_range": "100-150"},
+    "small_poc":                {"min_md": 20,   "max_md": 50,   "median_md": 30,   "leaf_count_range": "15-25"}
+  },
+
+  "phase_distribution_default": {
+    "setup_phase_pct":           {"value": 0.08, "range": [0.04, 0.24], "notes": "8% typical; 3-5% for huge projects, up to 22% for small/PoC"},
+    "development_phase_pct":     {"value": 0.80, "range": [0.70, 0.85], "notes": "Bulk of work"},
+    "testing_deploy_phase_pct":  {"value": 0.12, "range": [0.10, 0.17], "notes": "Higher for insurance/banking"}
+  },
+
+  "role_ratios_per_domain": {
+    "_doc": "% of total project MD per role, derived from real BnK projects",
+    "insurance": {"be": 0.44, "fe": 0.15, "ai": 0.0, "ba": 0.11, "qc": 0.21, "pm": 0.09},
+    "ai_cv": {"be": 0.31, "fe": 0.09, "ai": 0.27, "ba": 0.09, "qc": 0.14, "pm": 0.09},
+    "manufacturing_edge_ai": {"be": 0.26, "fe": 0.03, "ai": 0.33, "ba": 0.09, "qc": 0.21, "pm": 0.09},
+    "lending": {"be": 0.49, "fe": 0.26, "ai": 0.0, "ba": 0.05, "qc": 0.15, "pm": 0.05},
+    "nlp_poc": {"be": 0.02, "fe": 0.22, "ai": 0.30, "ba": 0.16, "qc": 0.22, "pm": 0.09},
+    "ai_legal": {"be": 0.70, "fe": 0.0, "ai": 0.0, "ba": 0.07, "qc": 0.14, "pm": 0.09, "_note": "BE+FE collapsed in source"},
+    "ai_agriculture_ds": {"be": 0.0, "fe": 0.0, "ai": 0.81, "ba": 0.19, "qc": 0.0, "pm": 0.0}
+  },
+
+  "ai_lifecycle_bundle_md": {
+    "_doc": "Total MD for one ML model end-to-end",
+    "data_collect": 10,
+    "data_label": 11,
+    "data_prep": 17,
+    "train_model": 19,
+    "tune_model": 10,
+    "benchmark": 3,
+    "inference_api": 7,
+    "integration": 10,
+    "total": 87
+  },
+
+  "fallback_defaults": {
+    "_doc": "Quick rule-of-thumb when exact category not found",
+    "api_design_per_spec": 3,
+    "backend_simple_crud_endpoint": 4,
+    "backend_complex_business_logic": 12,
+    "frontend_list_page": 16,
+    "frontend_form_page": 18,
+    "ai_model_training_simple": 20,
+    "ai_model_training_complex": 45,
+    "integration_one_third_party": 12,
+    "uat_per_phase": 8,
+    "deployment_per_env": 3,
+    "documentation_user_guide": 3,
+    "training_one_cohort": 2
+  }
+}

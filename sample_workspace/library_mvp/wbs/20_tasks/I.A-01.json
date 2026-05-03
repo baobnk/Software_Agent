@@ -1,0 +1,17 @@
+{
+  "row_num": null,
+  "ref_code": null,
+  "parent_code": "I.A",
+  "hierarchy_level": 4,
+  "code": "I.A-01",
+  "feature": "Project Kickoff and Setup",
+  "description": "Setup project infrastructure, repository, and initial environment.",
+  "remark": "",
+  "md_be": 0.0,
+  "md_fe": 2.0,
+  "md_ba": 0,
+  "md_qc": 0,
+  "md_pm": 0,
+  "source_feature_id": "FR1",
+  "source_section_id": null
+}

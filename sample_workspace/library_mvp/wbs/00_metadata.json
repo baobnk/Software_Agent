@@ -1,0 +1,15 @@
+{
+  "project_code": "BNK-LIB-001",
+  "project_name": "Library MVP",
+  "version": "0.1.0",
+  "master": {
+    "pct_pm": 0.05,
+    "pct_ba": 0.1,
+    "pct_qc": 0.3,
+    "rate_pm": 500,
+    "rate_ba": 400,
+    "rate_dev": 450,
+    "rate_qc": 350,
+    "currency_rate": 24500
+  }
+}

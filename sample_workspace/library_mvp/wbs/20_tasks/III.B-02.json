@@ -1,0 +1,17 @@
+{
+  "row_num": null,
+  "ref_code": null,
+  "parent_code": "III.B",
+  "hierarchy_level": 4,
+  "code": "III.B-02",
+  "feature": "Final Release and Documentation",
+  "description": "Deploy to production environment and finalize project documentation.",
+  "remark": "",
+  "md_be": 0.5,
+  "md_fe": 0.5,
+  "md_ba": 0,
+  "md_qc": 0,
+  "md_pm": 0,
+  "source_feature_id": "FR4",
+  "source_section_id": null
+}

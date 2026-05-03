@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0f1117;
+  --foreground: #e8eaf0;
+  --surface: #1a1d27;
+  --surface-hover: #22263a;
+  --border: #2a2d3e;
+  --accent: #4f8ef7;
+  --accent-hover: #3d7de6;
+  --muted: #6b7280;
+  --hitl-bg: #1e1b2e;
+  --hitl-border: #7c3aed;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Prose for AI messages */
+.prose-dark {
+  @apply text-gray-200;
+}
+.prose-dark p { @apply mb-3; }
+.prose-dark h1, .prose-dark h2, .prose-dark h3 {
+  @apply font-semibold text-white mb-2 mt-4;
+}
+.prose-dark code {
+  @apply bg-gray-800 text-blue-300 px-1.5 py-0.5 rounded text-xs font-mono;
+}
+.prose-dark pre {
+  @apply bg-gray-900 rounded-lg p-4 overflow-x-auto my-3;
+}
+.prose-dark pre code {
+  @apply bg-transparent p-0 text-green-300;
+}
+.prose-dark ul { @apply list-disc list-inside mb-3 space-y-1; }
+.prose-dark ol { @apply list-decimal list-inside mb-3 space-y-1; }
+.prose-dark li { @apply text-gray-300; }
+.prose-dark strong { @apply text-white font-semibold; }
+.prose-dark blockquote {
+  @apply border-l-4 border-blue-500 pl-4 italic text-gray-400 my-3;
+}
+.prose-dark table { @apply w-full border-collapse my-3; }
+.prose-dark th {
+  @apply bg-gray-800 text-gray-200 font-semibold px-3 py-2 text-left border border-gray-700;
+}
+.prose-dark td {
+  @apply px-3 py-2 border border-gray-700 text-gray-300;
+}
+
+/* Typing indicator */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.typing-dot {
+  animation: blink 1s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}

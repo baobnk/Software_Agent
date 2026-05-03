@@ -1,0 +1,18 @@
+{
+  "section_id": "396fd9f5-79f9-4032-95de-3db667dbc659",
+  "fr_id": "FR1",
+  "name": "Catalog CRUD",
+  "priority": "Critical",
+  "short_description": "Manage book records: create, update, list, delete.",
+  "description": "Staff users must be able to add new books to the catalog, update existing entries, remove outdated or duplicate records, and list all books. Accurate catalog management enables efficient tracking of inventory and supports search features. These functions are essential to daily library operation.",
+  "user_stories": [
+    "As a librarian, I want to add new books so that the catalog is always current.",
+    "As a librarian, I want to edit or remove book entries to correct errors or keep data clean.",
+    "As an assistant, I want to view all catalog entries so that I can help patrons quickly."
+  ],
+  "acceptance_criteria": [
+    "Given valid input, When a librarian adds a new book, Then the book appears in the catalog.",
+    "Given an entry exists, When it is edited or deleted, Then the catalog updates accordingly and old data is not visible."
+  ],
+  "interface_notes": "Staff web interface: Catalog management page (HTMX-enabled forms)."
+}

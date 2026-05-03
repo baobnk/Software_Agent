@@ -1,0 +1,10 @@
+{
+  "purpose": "This BRD defines the requirements and business context for a minimal library management system MVP to support library staff and public users with basic catalog, loan, and reporting capabilities.",
+  "intended_audience": [
+    {
+      "role": "Public Users",
+      "party": "Library visitors",
+      "responsibility": "Search for books and view public catalog"
+    }
+  ]
+}

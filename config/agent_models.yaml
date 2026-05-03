@@ -1,0 +1,56 @@
+# BnK DeepAgent — Model assignments per agent
+#
+# Resolution order per agent:
+#   1. Env var MODEL_<AGENT_UPPER>  (e.g. MODEL_BRD_DRAFTER)
+#   2. Per-agent "model" key below
+#   3. onprem.default_model (if onprem.enabled = true)
+#   4. Fallback default ("openai:gpt-5.4-mini")
+#
+# Model string format: "<provider>:<model-id>"
+#   openai:gpt-5.4-mini        → OpenAI cloud
+#   openai:gpt-4o              → OpenAI cloud
+#   anthropic:claude-sonnet-4  → Anthropic cloud
+#   openai:<your-model-name>   → On-premise (when onprem block is configured)
+
+# ── On-premise / custom OpenAI-compatible endpoint ──────────────────────────
+# Supports: Ollama, vLLM, LocalAI, LM Studio, Azure OpenAI, etc.
+# Set enabled: true and fill in base_url, api_key, default_model to activate.
+# Env vars OPENAI_BASE_URL / OPENAI_API_KEY take precedence over values here.
+onprem:
+  enabled: false
+  base_url: "https://llm-gateway.tpbank.bnksolution.com"   # e.g. Ollama default port
+  api_key: "sk-1234"                     # any non-empty value for local servers
+  default_model: "openai:openai36"     # model name served by your endpoint
+
+# ── Per-agent model assignments ───────────────────────────────────────────────
+orchestrator:
+  model: openai:gpt-5.4-mini
+  temperature: 0.1
+
+intake_agent:
+  model: openai:gpt-4.1-mini
+  temperature: 0.1
+
+solution_finder_agent:
+  model: openai:gpt-5.4-mini
+  temperature: 0.3
+
+brd_drafter_agent:
+  model: openai:gpt-4.1-mini
+  temperature: 0.3
+
+wbs_estimator_agent:
+  model: openai:gpt-4.1-mini
+  temperature: 0.2
+
+critic_agent:
+  model: openai:gpt-4.1-mini
+  temperature: 0.1
+
+exporter_agent:
+  model: openai:gpt-4.1-mini
+  temperature: 0.1
+
+technical_design_diagram:
+  model: openai:gpt-5.4-mini
+  temperature: 0.2

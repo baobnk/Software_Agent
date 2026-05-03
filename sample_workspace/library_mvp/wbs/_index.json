@@ -1,0 +1,94 @@
+{
+  "schema_version": "v2.0",
+  "project_code": "BNK-LIB-001",
+  "project_name": "Library MVP",
+  "modified_at": "2026-04-29T18:05:42",
+  "metadata_modified": "2026-04-29T18:05:20",
+  "structure_modified": "2026-04-29T18:05:29",
+  "structure_count": 12,
+  "task_count": 10,
+  "total_md_be": 15.0,
+  "total_md_fe": 15.0,
+  "tasks": [
+    {
+      "code": "I.A-01",
+      "feature": "Project Kickoff and Setup",
+      "md_be": 0.0,
+      "md_fe": 2.0,
+      "source_feature_id": "FR1",
+      "modified": "2026-04-29T18:05:36"
+    },
+    {
+      "code": "II.A.1-01",
+      "feature": "Develop Book CRUD APIs",
+      "md_be": 6.0,
+      "md_fe": 0.0,
+      "source_feature_id": "FR1",
+      "modified": "2026-04-29T18:05:36"
+    },
+    {
+      "code": "II.A.1-02",
+      "feature": "Develop Search API for Books",
+      "md_be": 3.0,
+      "md_fe": 0.0,
+      "source_feature_id": "FR2",
+      "modified": "2026-04-29T18:05:36"
+    },
+    {
+      "code": "II.A.2-01",
+      "feature": "Develop User Authentication APIs",
+      "md_be": 4.0,
+      "md_fe": 0.0,
+      "source_feature_id": "FR3",
+      "modified": "2026-04-29T18:05:36"
+    },
+    {
+      "code": "II.B.1-01",
+      "feature": "Implement Book Management UI",
+      "md_be": 0.0,
+      "md_fe": 5.0,
+      "source_feature_id": "FR1",
+      "modified": "2026-04-29T18:05:36"
+    },
+    {
+      "code": "II.B.2-01",
+      "feature": "Implement User Login UI",
+      "md_be": 0.0,
+      "md_fe": 4.0,
+      "source_feature_id": "FR3",
+      "modified": "2026-04-29T18:05:36"
+    },
+    {
+      "code": "III.A-01",
+      "feature": "Functional Test of CRUD and Search APIs",
+      "md_be": 1.0,
+      "md_fe": 1.0,
+      "source_feature_id": "FR1",
+      "modified": "2026-04-29T18:05:42"
+    },
+    {
+      "code": "III.A-02",
+      "feature": "UI Testing for Book and User Management",
+      "md_be": 0.0,
+      "md_fe": 2.0,
+      "source_feature_id": "FR1",
+      "modified": "2026-04-29T18:05:42"
+    },
+    {
+      "code": "III.B-01",
+      "feature": "Deployment to Test Environment",
+      "md_be": 0.5,
+      "md_fe": 0.5,
+      "source_feature_id": "FR4",
+      "modified": "2026-04-29T18:05:42"
+    },
+    {
+      "code": "III.B-02",
+      "feature": "Final Release and Documentation",
+      "md_be": 0.5,
+      "md_fe": 0.5,
+      "source_feature_id": "FR4",
+      "modified": "2026-04-29T18:05:42"
+    }
+  ]
+}

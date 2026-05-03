@@ -1,0 +1,72 @@
+{
+  "schema_version": "v2.0",
+  "project_name": "Library MVP",
+  "project_code": "BNK-LIB-001",
+  "language": "en",
+  "modified_at": "2026-04-29T18:06:42",
+  "sections": {
+    "metadata": {
+      "path": "00_metadata.json",
+      "filled": true,
+      "modified": "2026-04-29T18:05:50"
+    },
+    "introduction": {
+      "path": "01_introduction.json",
+      "filled": false,
+      "modified": "2026-04-29T18:05:50"
+    },
+    "context": {
+      "path": "02_context.json",
+      "filled": true,
+      "modified": "2026-04-29T18:06:42"
+    },
+    "scope": {
+      "path": "03_scope.json",
+      "filled": true,
+      "modified": "2026-04-29T18:06:04"
+    },
+    "stakeholders": {
+      "path": "04_stakeholders.json",
+      "filled": true,
+      "modified": "2026-04-29T18:06:22"
+    },
+    "nfr": {
+      "path": "05_3_nfr.json",
+      "filled": true,
+      "modified": "2026-04-29T18:06:22"
+    },
+    "data_req": {
+      "path": "05_4_data.json",
+      "filled": false,
+      "modified": "2026-04-29T18:05:50"
+    },
+    "integrations": {
+      "path": "05_5_integrations.json",
+      "filled": false,
+      "modified": "2026-04-29T18:05:50"
+    },
+    "acceptance": {
+      "path": "06_acceptance.json",
+      "filled": true,
+      "modified": "2026-04-29T18:06:04"
+    },
+    "glossary": {
+      "path": "07_glossary.json",
+      "filled": true,
+      "modified": "2026-04-29T18:06:22"
+    },
+    "appendix": {
+      "path": "08_appendix.json",
+      "filled": false,
+      "modified": "2026-04-29T18:05:50"
+    }
+  },
+  "frs": [
+    {
+      "fr_id": "FR1",
+      "section_id": "396fd9f5-79f9-4032-95de-3db667dbc659",
+      "path": "05_2_fr/FR1.json",
+      "modified": "2026-04-29T18:06:39"
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+version: "3.9"
+
+services:
+  # ── Main API ────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # LLM Keys (required)
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      # Model selection
+      - MODEL_ORCHESTRATOR=${MODEL_ORCHESTRATOR:-anthropic:claude-sonnet-4-6}
+      - MODEL_BRD_DRAFTER=${MODEL_BRD_DRAFTER:-anthropic:claude-sonnet-4-6}
+      - MODEL_WBS_ESTIMATOR=${MODEL_WBS_ESTIMATOR:-openai:gpt-5.4-mini}
+      - MODEL_CRITIC=${MODEL_CRITIC:-openai:gpt-5.4-mini}
+      # Folder control (mapped to Docker volumes below)
+      - ATTACHMENTS_DIR=/data/attachments
+      - OUTPUT_DIR=/data/outputs
+      - WORKSPACE_BASE_DIR=/data/workspace
+      # S3 / MinIO
+      - S3_ENDPOINT_URL=http://minio:9000
+      - S3_BUCKET=bnk-artifacts
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY:-bnkadmin}
+      - S3_SECRET_KEY=${S3_SECRET_KEY:-bnkadmin123}
+      - ENABLE_S3_UPLOAD=${ENABLE_S3_UPLOAD:-false}
+      # Observability
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY:-}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY:-}
+      - LANGFUSE_HOST=http://langfuse:3000
+      # Persistence (LangGraph checkpointer + store)
+      - DATABASE_URL=postgresql://bnk:bnk@postgres:5432/bnk_agent
+      - DB_POOL_SIZE=${DB_POOL_SIZE:-20}
+      - DB_POOL_MIN=${DB_POOL_MIN:-2}
+      # Feature flags
+      - ENABLE_HITL=${ENABLE_HITL:-true}
+      - MAX_CRITIC_RETRIES=${MAX_CRITIC_RETRIES:-3}
+    volumes:
+      # User-controlled: mount any local folder here for output
+      - ${HOST_OUTPUT_DIR:-./data/outputs}:/data/outputs
+      - ${HOST_INPUT_DIR:-./data/attachments}:/data/attachments
+      - workspace_data:/data/workspace
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── MinIO (S3-compatible artifact storage) ──────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Console → http://localhost:9001
+    environment:
+      - MINIO_ROOT_USER=${S3_ACCESS_KEY:-bnkadmin}
+      - MINIO_ROOT_PASSWORD=${S3_SECRET_KEY:-bnkadmin123}
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+
+  # ── Langfuse (LLM observability) ─────────────────────────────────────────────
+  langfuse:
+    image: langfuse/langfuse:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - DATABASE_URL=postgresql://langfuse:langfuse@langfuse-db:5432/langfuse
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXTAUTH_SECRET=changeme-in-production
+      - SALT=changeme-in-production
+    depends_on:
+      - langfuse-db
+    restart: unless-stopped
+
+  langfuse-db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=langfuse
+      - POSTGRES_PASSWORD=langfuse
+      - POSTGRES_DB=langfuse
+    volumes:
+      - langfuse_db:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # ── Postgres (LangGraph checkpointer + store) ───────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=bnk
+      - POSTGRES_PASSWORD=bnk
+      - POSTGRES_DB=bnk_agent
+    volumes:
+      - bnk_pg:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bnk -d bnk_agent"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  minio_data:
+  workspace_data:
+  langfuse_db:
+  bnk_pg:
+cd /mnt/f/code/agent/WBS_Agent/bnk-deepagent && conda run -n agent timeout 240 python test_step1.py --no-hitl --input ./input --model openai:gpt-5.4-mini 2>&1 | head -200

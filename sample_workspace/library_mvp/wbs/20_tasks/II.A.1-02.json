@@ -1,0 +1,17 @@
+{
+  "row_num": null,
+  "ref_code": null,
+  "parent_code": "II.A.1",
+  "hierarchy_level": 4,
+  "code": "II.A.1-02",
+  "feature": "Develop Search API for Books",
+  "description": "Implement backend API for book search by title, author, or ISBN.",
+  "remark": "",
+  "md_be": 3.0,
+  "md_fe": 0.0,
+  "md_ba": 0,
+  "md_qc": 0,
+  "md_pm": 0,
+  "source_feature_id": "FR2",
+  "source_section_id": null
+}

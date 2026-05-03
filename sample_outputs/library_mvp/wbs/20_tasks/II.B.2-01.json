@@ -1,0 +1,17 @@
+{
+  "row_num": null,
+  "ref_code": null,
+  "parent_code": "II.B.2",
+  "hierarchy_level": 4,
+  "code": "II.B.2-01",
+  "feature": "Implement User Login UI",
+  "description": "Develop frontend user login and registration pages.",
+  "remark": "",
+  "md_be": 0.0,
+  "md_fe": 4.0,
+  "md_ba": 0,
+  "md_qc": 0,
+  "md_pm": 0,
+  "source_feature_id": "FR3",
+  "source_section_id": null
+}

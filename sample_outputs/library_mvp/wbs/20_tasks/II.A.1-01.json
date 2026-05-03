@@ -1,0 +1,17 @@
+{
+  "row_num": null,
+  "ref_code": null,
+  "parent_code": "II.A.1",
+  "hierarchy_level": 4,
+  "code": "II.A.1-01",
+  "feature": "Develop Book CRUD APIs",
+  "description": "Implement backend APIs for create, read, update, delete operations of book records.",
+  "remark": "",
+  "md_be": 6.0,
+  "md_fe": 0.0,
+  "md_ba": 0,
+  "md_qc": 0,
+  "md_pm": 0,
+  "source_feature_id": "FR1",
+  "source_section_id": null
+}
