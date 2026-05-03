@@ -41,6 +41,7 @@ patch_workbook("upsert_master_role", ...)        # if missing AI Engineer
 patch_workbook("inject_wbs_hierarchy", ...)      # if WBS missing L1/L2 rows
 patch_workbook("clear_wbs_junk_rows", "{}")      # if junk past last data
 patch_workbook("add_wbs_total_row", "{}")        # if no TOTAL row
+patch_workbook("fix_wbs_number_formats", "{}")  # ensure decimal display on Total/BA/QC/PM cols
 patch_workbook("rebuild_effort_modules", ...)    # if Effort module IDs don't match WBS
 patch_workbook("rebuild_effort_total", "{}")     # to fix hardcoded SUM()
 ```
@@ -85,7 +86,7 @@ row immediately above it. Idempotent — codes that already exist are skipped.
 rather than as an overhead percentage of dev. Set `pct_on_dev > 0` only if
 you want a flat % of dev effort allocated to this role.
 
-### clear_wbs_junk_rows / add_wbs_total_row / rebuild_effort_total
+### clear_wbs_junk_rows / add_wbs_total_row / fix_wbs_number_formats / rebuild_effort_total
 
 No payload. Empty `{}` is fine.
 

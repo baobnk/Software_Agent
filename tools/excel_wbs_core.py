@@ -47,6 +47,10 @@ _FONT_L1 = Font(bold=True, color="FFFFFF")
 _FILL_L2 = PatternFill("solid", fgColor="BDD7EE")  # light blue
 _FONT_L2 = Font(bold=True)
 
+# Decimal format for effort cols (Total, BA, QC, PM) — hides trailing zeros
+_FMT_DECIMAL = r'_(* #,##0.##_);_(* \(#,##0.##\);_(* "-"??_);_(@_)'
+_DECIMAL_COLS = (WBS_COL_TOTAL, WBS_COL_AI, WBS_COL_BA, WBS_COL_QC, WBS_COL_PM)
+
 
 @dataclass
 class HierarchyRow:
@@ -96,7 +100,10 @@ def _write_hierarchy_row(
                     WBS_COL_BA, WBS_COL_QC, WBS_COL_PM):
             cl = get_column_letter(col)
             refs = ",".join(f"{cl}{r}" for r in leaf_rows)
-            ws.cell(row, col).value = f"=SUM({refs})"
+            cell = ws.cell(row, col)
+            cell.value = f"=SUM({refs})"
+            if col in _DECIMAL_COLS:
+                cell.number_format = _FMT_DECIMAL
 
 
 def _gather_leaf_index(ws, last_row: int) -> dict[int, int]:
@@ -258,7 +265,10 @@ def add_total_row(wb: Workbook, label: str = "TOTAL") -> dict:
                     WBS_COL_BA, WBS_COL_QC, WBS_COL_PM):
             cl = get_column_letter(col)
             refs = ",".join(f"{cl}{r}" for r in l1_rows)
-            ws.cell(target_row, col).value = f"=SUM({refs})"
+            cell = ws.cell(target_row, col)
+            cell.value = f"=SUM({refs})"
+            if col in _DECIMAL_COLS:
+                cell.number_format = _FMT_DECIMAL
 
     return {"row": target_row, "summed_rows": l1_rows}
 
@@ -442,3 +452,30 @@ def derive_hierarchy_from_state(state_phases: list[dict]) -> HierarchySpec:
         modules_by_phase[phase.code] = mods
 
     return HierarchySpec(phases=phases, modules_by_phase=modules_by_phase)
+
+
+def fix_wbs_number_formats(wb: Workbook) -> dict:
+    """Apply decimal number format to cols F, I, J, K across all WBS data rows.
+
+    Cols G/H (BE/FE) already use the decimal format in the template.
+    Cols F (Total), I (BA), J (QC), K (PM) default to integer format which
+    truncates percentage-computed values. This function patches every data row
+    including existing leaf rows written by the legacy renderer.
+    """
+    if SHEET_WBS not in wb.sheetnames:
+        return {"patched": 0, "skipped": "sheet not found"}
+    ws = wb[SHEET_WBS]
+
+    last = find_last_data_row(
+        ws, start_row=WBS_DATA_START,
+        check_cols=(WBS_COL_NUM, WBS_COL_REFCODE, WBS_COL_FEATURE),
+    )
+    patched = 0
+    for r in range(WBS_DATA_START, last + 2):  # +2 to catch TOTAL row
+        for col in _DECIMAL_COLS:
+            cell = ws.cell(r, col)
+            if cell.number_format != _FMT_DECIMAL:
+                cell.number_format = _FMT_DECIMAL
+                patched += 1
+
+    return {"patched": patched, "through_row": last + 1}

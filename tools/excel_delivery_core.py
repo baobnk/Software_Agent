@@ -35,15 +35,15 @@ def _safe_set(ws, row: int, col: int, value=None, fill=None) -> None:
 
 # Delivery sheet layout
 DP_HEADER_ROW = 5
-DP_DATA_START = 7        # First module row (matches template ordering with row 6 = REQUIREMENT GATHERING)
-DP_DATA_MAX = 17
+DP_DATA_START = 7        # First module row (row 6 = REQUIREMENT GATHERING static)
+DP_DATA_MAX = 21         # Last module row (15 slots: I, I.A, I.B, II, II.A–II.G, III, III.A–III.C)
 
-DP_RP_HEADER_ROW = 19
-DP_RP_DATA_START = 20
+DP_RP_HEADER_ROW = 23
+DP_RP_DATA_START = 24    # First role row (7 roles: PM, TL, Dev, BA, QC, Designer, DevOps)
 
-DP_DM_HEADER_ROW = 29
-DP_DM_DATA_START = 30
-DP_DM_DATA_MAX = 36
+DP_DM_HEADER_ROW = 33
+DP_DM_DATA_START = 34    # First deliverable row (5 milestones)
+DP_DM_DATA_MAX = 38
 
 DP_COL_NUM = 2       # B
 DP_COL_NAME = 3      # C

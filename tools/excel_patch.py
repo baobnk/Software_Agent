@@ -9,6 +9,7 @@ Operations:
   - add_wbs_total_row      : payload = {"label": "TOTAL"}    (label optional)
   - insert_ai_column_wbs   : payload = {}   — idempotent, inserts AI/ML (MD) col in WBS
   - rebuild_wbs_rollups    : payload = {}   — rewrite all L1/L2/L3 SUM+pct formulas
+  - fix_wbs_number_formats : payload = {}   — set decimal fmt on Total/BA/QC/PM cols
   - upsert_master_role     : payload = {"role_label", "pct_on_dev", "rate_usd",
                                          "pct_named_range", "rate_named_range",
                                          "remark"}
@@ -43,6 +44,7 @@ from .excel_wbs_core import (
     clear_junk_rows,
     consolidate_hierarchy,
     derive_hierarchy_from_state,
+    fix_wbs_number_formats,
     inject_hierarchy_rows,
     insert_ai_column_wbs,
     rebuild_l1_l2_rollups,
@@ -76,6 +78,9 @@ def _dispatch(operation: str, wb, payload: dict) -> Any:
 
     if operation == "rebuild_wbs_rollups":
         return rebuild_l1_l2_rollups(wb)
+
+    if operation == "fix_wbs_number_formats":
+        return fix_wbs_number_formats(wb)
 
     if operation == "add_wbs_total_row":
         return add_total_row(wb, label=payload.get("label", "TOTAL"))
@@ -145,6 +150,7 @@ def patch_workbook(xlsx_path: str, operation: str, payload_json: str = "{}") -> 
       add_wbs_total_row           — append TOTAL row to WBS sheet
       insert_ai_column_wbs        — insert AI/ML (MD) column into WBS; auto-rebuilds formulas
       rebuild_wbs_rollups         — rewrite all rollup + pct formulas in WBS
+      fix_wbs_number_formats      — apply decimal format to Total/BA/QC/PM cols in WBS
       write_effort_headers        — write standard header row in Effort sheet
       upsert_master_role          — add/update a role row in Master Data
       rebuild_effort_total        — fix Effort TOTAL formula to sum all modules
